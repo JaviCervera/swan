@@ -1,0 +1,96 @@
+#ifndef SWAN_TIME_H
+#define SWAN_TIME_H
+
+#include "str"
+#include <string>
+#if defined(_WIN32)
+#include <Mmsystem.h>
+#elif defined(__APPLE__)
+#include <CoreServices/CoreServices.h>
+#endif
+#include <time.h>
+
+namespace swan {
+
+  class time {
+  public:
+    static unsigned int millisecs();
+    static void delay(unsigned int msecs);
+    static std::string currentdate();
+    static std::string currenttime();
+  protected:
+    time() {}
+  };
+
+  inline unsigned int time::millisecs() {
+    #if defined(_WIN32)
+    return timeGetTime();
+    #elif defined(__linux__)
+    static long basetime = -1;
+    long t;
+    struct timeval tv;
+    gettimeofday(&tv, 0);
+    t = tv.tv_sec * 1000;
+    t += tv.tv_usec / 1000;
+    if ( basetime == -1 ) {
+      struct sysinfo info;
+      sysinfo(&info);
+      basetime = t - info.uptime * 1000;
+    }
+    return t - basetime;
+    #elif defined(__APPLE__)
+    double t;
+    UnsignedWide uw;
+    Microseconds( &uw );
+    t=(uw.hi<<(32-9))|(uw.lo>>9);
+    return t/(1000.0/512.0);
+    #endif
+  }
+
+  inline void time::delay(unsigned int msecs) {
+    #if defined(_WIN32)
+    Sleep(msecs);
+    #else
+    struct timespec req;
+    memset(&req, 0, sizeof(struct timespec));
+    req.tv_sec = 0;
+    req.tv_nsec = msecs * 1000000L;
+    nanosleep(&req, (struct timespec*)0);
+    #endif
+  }
+
+  inline std::string time::currentdate() {
+    // Get local time
+    time_t timer;
+    ::time(&timer);
+    tm* timeinfo = localtime(&timer);
+
+    // Fill buffer
+    std::string date = str::lset(str::fromnumber(timeinfo->tm_mday), 2, '0');
+    date += " ";
+    date +=  str::lset(str::fromnumber(timeinfo->tm_mon+1), 2, '0');
+    date += " ";
+    date += str::lset(str::fromnumber(timeinfo->tm_year+1900), 4, '0');
+
+    return date;
+  }
+
+  inline std::string time::currenttime() {
+    // Get local time
+    time_t timer;
+    ::time(&timer);
+    tm* timeinfo = localtime(&timer);
+
+    // Fill buffer
+    std::string time = str::lset(str::fromnumber(timeinfo->tm_hour), 2, '0');
+    time += ":";
+    time +=  str::lset(str::fromnumber(timeinfo->tm_min), 2, '0');
+    time += ":";
+    time += str::lset(str::fromnumber(timeinfo->tm_sec), 2, '0');
+
+    return time;
+  }
+
+} // namespace swan
+
+#endif // SWAN_TIME_H

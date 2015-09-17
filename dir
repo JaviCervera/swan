@@ -1,0 +1,77 @@
+#ifndef SWAN_DIR_H
+#define SWAN_DIR_H
+
+#include <string>
+#include <vector>
+
+#ifndef _MSC_VER
+#include <dirent.h>
+#include <unistd.h>
+#include <sys/stat.h>
+#define _getcwd getcwd
+#define _chdir chdir
+#define _rmdir rmdir
+#else
+#include <direct.h>
+#include "dirent.h"
+//#undef CopyFile
+//#undef DeleteFile
+#endif
+
+namespace swan {
+
+  class dir {
+  public:
+    static std::vector<std::string> contents(const std::string& path);
+    static std::string current();
+    static void change(const std::string& path);
+    static void create(const std::string& path);
+    static void del(const std::string& path);
+  protected:
+    dir() {}
+  };
+
+  inline std::vector<std::string> dir::contents(const std::string& path) {
+    std::vector<std::string> arr;
+
+    // Open directory
+    DIR* d = (DIR*)opendir(path.c_str());
+    if ( d == NULL ) return arr;
+
+    // Copy directory contents
+    struct dirent* entry;
+    while ( (entry = (struct dirent*)readdir(d)) ) {
+      arr.push_back(entry->d_name);
+    }
+
+    // Close directory
+    closedir(d);
+
+    return arr;
+  }
+
+  inline std::string dir::current() {
+    char buf[FILENAME_MAX];
+    _getcwd(buf, FILENAME_MAX);
+    return std::string(buf);
+  }
+
+  inline void dir::change(const std::string& path) {
+    _chdir(path.c_str());
+  }
+
+  inline void dir::create(const std::string& path) {
+    #ifdef _WIN32
+    mkdir(path.c_str());
+    #else
+    mkdir(path.c_str(), S_IRWXU | S_IRGRP | S_IXGRP);
+    #endif
+  }
+
+  inline void dir::del(const std::string& path) {
+    _rmdir(path.c_str());
+  }
+
+} // namespace swan
+
+#endif // SWAN_DIR_H

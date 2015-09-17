@@ -1,0 +1,68 @@
+#ifndef SWAN_SYS_H
+#define SWAN_SYS_H
+
+#include <string>
+#include <stdlib.h>
+#ifdef _WIN32
+#define popen _popen
+#define pclose _pclose
+#endif
+
+namespace swan {
+
+  class sys {
+  public:
+    enum platform {
+      windows,
+      osx,
+      linux
+    };
+
+    static platform platformid();
+    static std::string getenv(const std::string& var) { return getenv(var.c_str()); }
+    static int call(const std::string& command) { return system(command.c_str()); }
+    static std::string run(const std::string& program);
+    static void exit(int exitCode) { exit(exitCode); }
+  protected:
+    sys() {}
+  };
+
+  inline sys::platform sys::platformid() {
+    #if defined(_WIN32)
+    return windows;
+    #elif defined(__APPLE__)
+    return osx;
+    #elif defined(__linux__)
+    return linux;
+    #else
+    return 0;
+    #endif
+  }
+
+  inline std::string sys::run(const std::string& program) {
+    std::string output;
+
+    // Open pipe
+    FILE* pipe = popen(program.c_str(), "rt");
+    if ( !pipe ) return "";
+
+    // Read pipe
+    while ( !feof(pipe) ) {
+      char tmp[128];
+      if ( fgets(tmp, 128, pipe) != 0 ) output += tmp;
+    }
+
+    // Close pipe
+    pclose(pipe);
+
+    return output;
+  }
+
+} // namespace swan
+
+#ifdef _WIN32
+#undef popen
+#undef pclose
+#endif
+
+#endif // SWAN_SYS_H

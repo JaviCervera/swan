@@ -1,0 +1,21 @@
+#ifndef SWAN_SHAREDLIB_H
+#define SWAN_SHAREDLIB_H
+
+#include "swan_platform"
+#include <string>
+
+namespace swan {
+
+  class sharedlib {
+  public:
+    sharedlib(const std::string& filename) { handle = platform_loadlibrary(filename); }
+    ~sharedlib() { if ( handle ) platform_freelibrary(handle); }
+    bool isopen() const { return handle != 0; }
+    void* funcptr(const std::string& name) const { return platform_libraryfunction(handle, name); }
+  private:
+    void* handle;
+  };
+
+} // namespace swan
+
+#endif // SWAN_SHAREDLIB_H

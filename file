@@ -1,0 +1,205 @@
+#ifndef SWAN_FILE_H
+#define SWAN_FILE_H
+
+#include "swan_platform"
+#include <cstring>
+#include <cstdio>
+
+namespace swan {
+
+  class file {
+  public:
+    enum mode {
+      read,
+      write,
+      append
+    };
+
+    enum type {
+      none,
+      fil,
+      dir
+    };
+
+    file(const std::string& filename, mode m);
+    ~file() { close(); }
+    bool isopen() const { return handle != 0; }
+
+    void close() { if ( handle ) fclose(handle); handle = 0; }
+    size_t size() const { return size_; }
+    size_t pos() const { return ftell(handle); }
+    void seek(size_t offset) { fseek(handle, offset, SEEK_SET); }
+    bool eof() const { return pos() == size_; }
+
+    char readchar();
+    short readshort();
+    int readint();
+    long long readint64();
+    unsigned char readuchar();
+    unsigned short readushort();
+    unsigned int readuint();
+    unsigned long long readuint64();
+    float readfloat();
+    double readdouble();
+    std::string readcstring();
+    std::string readcline();
+    size_t readbytes(void* buffer, size_t count) { return fread(buffer, 1, count, handle); }
+
+    void writechar(char v) { fwrite(&v, 1, sizeof(char), handle); }
+    void writeshort(short v) { fwrite(&v, 1, sizeof(short), handle); }
+    void writeint(int v) { fwrite(&v, 1, sizeof(int), handle); }
+    void writeint64(long long v) { fwrite(&v, 1, sizeof(long long), handle); }
+    void writeuchar(unsigned char v) { fwrite(&v, 1, sizeof(unsigned char), handle); }
+    void writeushort(unsigned short v) { fwrite(&v, 1, sizeof(unsigned short), handle); }
+    void writeuint(unsigned int v) { fwrite(&v, 1, sizeof(unsigned int), handle); }
+    void writeuint64(unsigned long long v) { fwrite(&v, 1, sizeof(unsigned long long), handle); }
+    void writefloat(float v) { fwrite(&v, 1, sizeof(float), handle); }
+    void writedouble(double v) { fwrite(&v, 1, sizeof(double), handle); }
+    void writecstring(const std::string& v) { fwrite(v.c_str(), v.length()+1, sizeof(char), handle); }
+    void writecline(const std::string& v) { std::string str = v + "\r\n"; fwrite(str.c_str(), str.length(), sizeof(char), handle); }
+    size_t writebytes(const void* buffer, size_t count) { return fwrite(buffer, 1, count, handle); }
+
+    static type filetype(const std::string& filename) { return static_cast<type>(platform_filetype(filename)); }
+    static size_t filesize(const std::string& filename) { return platform_filesize(filename); }
+    static void copy(const std::string& filenameSrc, const std::string& filenameDst);
+    static void del(const std::string& filename) { platform_deletefile(filename); }
+  private:
+    FILE* handle;
+    size_t size_;
+  };
+
+  inline file::file(const std::string& filename, mode m) {
+    std::string attr;
+    switch ( m ) {
+      case read:
+      attr = "rb";
+      break;
+      case write:
+      attr = "wb";
+      break;
+      case append:
+      attr = "ab";
+      break;
+    }
+
+    handle = fopen(filename.c_str(), attr.c_str());
+    size_ = -1;
+    if ( handle && m == read ) {
+      fseek(handle, 0, SEEK_END);
+      size_ = ftell(handle);
+      fseek(handle, 0, SEEK_SET);
+    }
+  }
+
+  inline char file::readchar() {
+    char v;
+    fread(&v, 1, sizeof(char), handle);
+    return v;
+  }
+
+  inline short file::readshort() {
+    short v;
+    fread(&v, 1, sizeof(short), handle);
+    return v;
+  }
+
+  inline int file::readint() {
+    int v;
+    fread(&v, 1, sizeof(int), handle);
+    return v;
+  }
+
+  inline long long file::readint64() {
+    long long v;
+    fread(&v, 1, sizeof(long long), handle);
+    return v;
+  }
+
+  inline unsigned char file::readuchar() {
+    unsigned char v;
+    fread(&v, 1, sizeof(unsigned char), handle);
+    return v;
+  }
+
+  inline unsigned short file::readushort() {
+    unsigned short v;
+    fread(&v, 1, sizeof(unsigned short), handle);
+    return v;
+  }
+
+  inline unsigned int file::readuint() {
+    unsigned int v;
+    fread(&v, 1, sizeof(unsigned int), handle);
+    return v;
+  }
+
+  inline unsigned long long file::readuint64() {
+    unsigned long long v;
+    fread(&v, 1, sizeof(unsigned long long), handle);
+    return v;
+  }
+
+  inline float file::readfloat() {
+    float v;
+    fread(&v, 1, sizeof(float), handle);
+    return v;
+  }
+
+  inline double file::readdouble() {
+    double v;
+    fread(&v, 1, sizeof(double), handle);
+    return v;
+  }
+
+  inline std::string file::readcstring() {
+    std::string str;
+    char c = readchar();
+    while ( c != 0 ) {
+      str += c;
+      c = readchar();
+    }
+    return str;
+  }
+
+  inline std::string file::readcline() {
+    std::string str;
+    char c = readchar();
+    while ( c != '\r' && c != '\n' ) {
+      str += c;
+      if ( !eof() ) {
+        c = readchar();
+      } else {
+        break;
+      }
+    }
+    if ( c == '\r' && !eof() ) {
+      c = readchar();
+      if ( c != '\n' ) seek(pos()-1);
+    }
+    return str;
+  }
+
+  inline void file::copy(const std::string& filenameSrc, const std::string& filenameDst) {
+    // Open first file for reading
+    file fin(filenameSrc, read);
+    if ( fin.isopen() ) {
+      // Read contents
+      void* buffer = malloc(fin.size());
+      fin.readbytes(buffer, fin.size());
+
+      // Write to second file
+      file fout(filenameDst, write);
+      if ( fout.isopen() ) {
+        fout.writebytes(buffer, fin.size());
+        fout.close();
+      }
+
+      // Free resources
+      free(buffer);
+      fin.close();
+    }
+  }
+
+} // namespace swan
+
+#endif // SWAN_FILE_H

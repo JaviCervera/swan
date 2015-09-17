@@ -1,0 +1,87 @@
+#ifndef SWAN_PLATFORM_H
+#define SWAN_PLATFORM_H
+
+#include "str"
+
+// Used by File
+#include <sys/stat.h>
+
+// Used by SharedLib
+#ifdef _WIN32
+extern "C" void* __stdcall LoadLibraryA(const char*);
+extern "C" void* __stdcall GetProcAddress(const void*, const char*);
+extern "C" int __stdcall FreeLibrary(void*);
+#else
+#include <dlfcn.h>
+#endif
+
+// Used by time
+#ifdef _WIN32
+extern "C" unsigned int __stdcall timeGetTime();
+extern "C" void __stdcall Sleep(unsigned int);
+#else
+
+#endif
+
+namespace swan {
+
+  std::string platform_stripmangling(std::string str);
+
+  inline int platform_filetype(const std::string& filename) {
+    struct stat statbuf;
+    if ( stat(filename.c_str(), &statbuf) == -1 )
+      return 0; // none
+    else if ( S_ISDIR(statbuf.st_mode) )
+      return 2; // dir
+    else
+      return 1; // file
+  }
+
+  inline size_t platform_filesize(const std::string& filename) {
+    struct stat statbuf;
+    if ( stat(filename.c_str(), &statbuf) == -1 )
+      return -1;   // Does not exist
+    else
+      return statbuf.st_size;
+  }
+
+  inline void platform_deletefile(const std::string& filename) {
+    remove(filename.c_str());
+  }
+
+  inline void* platform_loadlibrary(const std::string& libname) {
+    #if defined(_WIN32)
+    return LoadLibraryA((libname + ".dll").c_str());
+    #elif defined(__APPLE__)
+    return dlopen((libname + ".dylib").c_str(), RTLD_LAZY);
+    #elif defined(__linux__)
+    return dlopen((libname + ".so").c_str(), RTLD_LAZY);
+    #endif
+  }
+
+  inline void platform_freelibrary(void* lib) {
+    #if defined(_WIN32)
+    FreeLibrary(lib);
+    #else
+    dlclose(lib);
+    #endif
+  }
+
+  inline void* platform_libraryfunction(void* lib, const std::string& funcname) {
+    #if defined(_WIN32)
+    return GetProcAddress(lib, funcname.c_str());
+    #else
+    return dlsym(lib, platform_stripmangling(funcname).c_str());
+    #endif
+  }
+
+  inline std::string platform_stripmangling(std::string str) {
+    std::vector<std::string> arr = str::split(str, '@');
+    str = arr[0];
+    if ( str[0] == '_' ) str = str.substr(1, std::string::npos);
+    return str;
+  }
+
+} // namespace swan
+
+#endif // SWAN_PLATFORM_H
