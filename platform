@@ -1,0 +1,78 @@
+#ifndef SWAN_PLATFORM_H
+#define SWAN_PLATFORM_H
+
+#include <string>
+#include <stdlib.h>
+#ifdef _WIN32
+#define popen _popen
+#define pclose _pclose
+#endif
+
+namespace swan
+{
+  namespace platform
+  {
+    enum platformid
+    {
+      windows,
+      macos,
+      linux
+    };
+
+    inline platformid platformid()
+    {
+#if defined(_WIN32)
+      return windows;
+#elif defined(__APPLE__)
+      return macos;
+#elif defined(__linux__)
+      return linux;
+#else
+      return 0;
+#endif
+    }
+
+    inline std::string getenv(const char* var)
+    {
+      return ::getenv(var);
+    }
+
+    inline int call(const char* command)
+    {
+      return system(command);
+    }
+
+    inline std::string run(const char* program)
+    {
+      std::string output;
+
+      // open pipe
+      FILE* pipe = popen(program, "rt");
+      if ( !pipe ) return output;
+
+      // read pipe
+      while ( !feof(pipe) )
+      {
+        char tmp[128];
+        if ( fgets(tmp, 128, pipe) != 0 ) output += tmp;
+      }
+
+      // close pipe
+      pclose(pipe);
+
+      return output;
+    }
+
+    inline void exit(int exitCode)
+    {
+      exit(exitCode);
+    }
+  } // namespace platform
+} // namespace swan
+
+#ifdef _WIN32
+#undef popen
+#undef pclose
+#endif
+
+#endif // SWAN_PLATFORM_H

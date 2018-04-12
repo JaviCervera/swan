@@ -1,3 +1,0 @@
-- dir::del does not work.
-- time::millisecs does not work on Linux?
-- time::delay does not work on OS X?
