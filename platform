@@ -1,8 +1,9 @@
 #ifndef SWAN_PLATFORM_H
 #define SWAN_PLATFORM_H
 
-#include <string>
 #include <stdlib.h>
+#include <string>
+
 #ifdef _WIN32
 #define popen _popen
 #define pclose _pclose
@@ -34,7 +35,21 @@ namespace swan
 
     inline std::string getenv(const char* var)
     {
-      return ::getenv(var);
+      std::string env;
+#ifdef _MSC_VER
+      char* buffer = NULL;
+      size_t size;
+      _dupenv_s(&buffer, &size, var);
+      if ( buffer )
+      {
+        env = buffer;
+        free(buffer);
+      }
+#else
+      char* p = ::getenv(var);
+      if ( p ) env = p;
+#endif
+      return env;
     }
 
     inline int call(const char* command)

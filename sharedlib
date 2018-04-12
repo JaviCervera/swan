@@ -17,9 +17,9 @@ namespace swan
   {
   public:
     sharedlib_t(const char* filename);
-    ~sharedlib_t() { if ( handle ) platform_freelibrary(handle); }
+    ~sharedlib_t();
     bool isopen() const { return handle != 0; }
-    void* funcptr(const char* name) const { return platform_libraryfunction(handle, name); }
+    void* funcptr(const char* name) const;
   private:
     void* handle;
   };
@@ -47,7 +47,7 @@ namespace swan
     }
   }
 
-  inline void* sharedlib_t::funcptr(void* lib, const char* funcname)
+  inline void* sharedlib_t::funcptr(const char* funcname) const
   {
     if ( handle )
     {

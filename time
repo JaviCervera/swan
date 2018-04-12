@@ -1,19 +1,23 @@
+// note: on windows, you need to link to winmm to use time module
+
 #ifndef SWAN_TIME_H
 #define SWAN_TIME_H
 
 #if defined(_WIN32)
-#include <Mmsystem.h>
+//#define WIN32_LEAN_AND_MEAN
+//#include <Windows.h>
+//#include <Mmsystem.h>
 #elif defined(__APPLE__)
 #include <CoreServices/CoreServices.h>
 #elif defined(__linux__)
 #include <sys/sysinfo.h>
 #include <sys/time.h>
-#include <time.h>
 #endif
+#include <time.h>
 
 #ifdef _WIN32
-//extern "C" unsigned int __stdcall timeGetTime();
-//extern "C" void __stdcall Sleep(unsigned int);
+extern "C" unsigned int __stdcall timeGetTime();
+extern "C" void __stdcall Sleep(unsigned int);
 #endif
 
 namespace swan
@@ -74,15 +78,21 @@ namespace swan
       // get local time
       time_t timer;
       ::time(&timer);
-      tm* timeinfo = localtime(&timer);
+#ifdef _MSC_VER
+      tm ti = { 0 };
+      localtime_s(&ti, &timer);
+      tm* pti = &ti;
+#else
+      tm* pti = localtime(&timer);
+#endif
 
       timeinfo_t t;
-      t.year = timeinfo->tm_year+1900;
-      t.mon = timeinfo->tm_mon+1;
-      t.day = timeinfo->tm_mday;
-      t.hour = timeinfo->tm_hour;
-      t.min = timeinfo->tm_min;
-      t.sec = timeinfo->tm_sec;
+      t.year = pti->tm_year+1900;
+      t.mon = pti->tm_mon+1;
+      t.day = pti->tm_mday;
+      t.hour = pti->tm_hour;
+      t.min = pti->tm_min;
+      t.sec = pti->tm_sec;
       return t;
     }
   } // namespace time

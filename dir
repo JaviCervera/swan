@@ -1,3 +1,5 @@
+// note: on visual studio, if you include this file dirent.h must be present
+
 #ifndef SWAN_DIR_H
 #define SWAN_DIR_H
 
@@ -10,10 +12,11 @@
 #include <sys/stat.h>
 #define _getcwd getcwd
 #define _chdir chdir
+#define _mkdir mkdir
 #define _rmdir rmdir
 #else
 #include <direct.h>
-//#include "dirent.h"
+#include "dirent.h"
 //#undef CopyFile
 //#undef DeleteFile
 #endif
@@ -58,9 +61,9 @@ namespace swan
     inline void create(const char* path)
     {
 #ifdef _WIN32
-      mkdir(path);
+      _mkdir(path);
 #else
-      mkdir(path, S_IRWXU | S_IRGRP | S_IXGRP);
+      _mkdir(path, S_IRWXU | S_IRGRP | S_IXGRP);
 #endif
     }
 

@@ -1,4 +1,4 @@
-#include "../dir"
+#include "../dir" // on visual studio, if you include this file dirent.h must be present
 #include <iostream>
 
 int main()
@@ -9,7 +9,7 @@ int main()
   std::cout << "current dir: " << swan::dir::current() << std::endl;
   std::cout << "contents:" << std::endl;
   std::vector<std::string> contents = swan::dir::contents(".");
-  for ( std::vector<std::string>::const_iterator it = contents.cbegin(); it != contents.cend(); ++it )
+  for ( std::vector<std::string>::const_iterator it = contents.begin(); it != contents.end(); ++it )
   {
     std::cout << " " << *it << std::endl;
   }
@@ -18,9 +18,11 @@ int main()
   std::cout << "current dir: " + swan::dir::current() << std::endl;
   std::cout << "contents:" << std::endl;
   contents = swan::dir::contents(".");
-  for ( std::vector<std::string>::const_iterator it = contents.cbegin(); it != contents.cend(); ++it )
+  for ( std::vector<std::string>::const_iterator it = contents.begin(); it != contents.end(); ++it )
   {
     std::cout << " " << *it << std::endl;
   }
+  
+  return 0;
 }
 

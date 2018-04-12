@@ -23,5 +23,6 @@ int main()
   }
   swan::fileremove("file_copy.cc");
   std::cout << "file 'file_copy.cc' removed" << std::endl;
+  return 0;
 }
 

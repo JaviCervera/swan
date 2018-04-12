@@ -1,10 +1,15 @@
 #ifndef SWAN_FILE_H
 #define SWAN_FILE_H
 
-#include <cstring>
-#include <cstdio>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <string>
 #include <sys/stat.h>
+
+#if defined _WIN32 && !defined S_ISDIR
+#define S_ISDIR(m) (((m) & _S_IFDIR) == _S_IFDIR)
+#endif
 
 namespace swan
 {
@@ -75,7 +80,11 @@ namespace swan
       break;
     }
 
+#ifdef _MSC_VER
+    fopen_s(&handle, filename, attr.c_str());
+#else
     handle = fopen(filename, attr.c_str());
+#endif
     size_ = -1;
     if ( handle && m == read )
     {
@@ -212,7 +221,7 @@ namespace swan
   {
     struct stat statbuf;
     if ( stat(filename, &statbuf) == -1 )
-      return -1;   // does not exist
+      return 0;   // does not exist
     else
       return statbuf.st_size;
   }
