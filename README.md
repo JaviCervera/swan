@@ -11,6 +11,7 @@ Swan contains the following modules:
 * **platform**: For accesing some platform features, like getting the name, launching a program, etc.
 * **sharedlib**: Access to dynamically linked libraries.
 * **strmanip**: Several string manipulation functions that require several statements in STL. For example, reading a text file into a string (or saving a string to a file), converting a string to a number, splitting a string with a separator token...
+* **testing**: Unit-testing module, inspired by JavaScript's Jasmine.
 * **time**: Time related functions *(the functionality of this module is now part of the standard on `std::chrono`)*.
 
 ## Usage
