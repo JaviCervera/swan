@@ -1,6 +1,7 @@
 #ifndef SWAN_PLATFORM_H
 #define SWAN_PLATFORM_H
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <string>
 
@@ -15,19 +16,19 @@ namespace swan
   {
     enum platformid
     {
-      windows,
-      macos,
-      linux
+      pwindows,
+      pmacos,
+      plinux
     };
 
     inline platformid platformid()
     {
 #if defined(_WIN32)
-      return windows;
+      return pwindows;
 #elif defined(__APPLE__)
-      return macos;
+      return pmacos;
 #elif defined(__linux__)
-      return linux;
+      return plinux;
 #else
       return 0;
 #endif

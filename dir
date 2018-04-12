@@ -3,6 +3,7 @@
 #ifndef SWAN_DIR_H
 #define SWAN_DIR_H
 
+#include <stdio.h>
 #include <string>
 #include <vector>
 
