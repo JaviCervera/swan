@@ -1,0 +1,451 @@
+// TODO: optimize replace_all
+
+#ifndef STRING_H_INCLUDED
+#define STRING_H_INCLUDED
+
+#include "vector.h"
+#include <ctype.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#ifdef _WIN32
+#define realpath(N,R) _fullpath((R),(N),_MAX_PATH)
+#endif
+
+class string_t {
+public:
+  string_t(const char* s = "");
+  string_t(size_t n, char c);
+  string_t(const string_t& str);
+  ~string_t();
+
+  bool operator==(const string_t& other) const;
+  bool operator!=(const string_t& other) const;
+  bool operator<(const string_t& other) const;
+  bool operator>(const string_t& other) const;
+  string_t operator+(const string_t& other) const;
+  string_t operator+(char c) const;
+  string_t& operator=(const string_t& other);
+  string_t& operator=(char c);
+  string_t& operator+=(const string_t& other);
+  string_t& operator+=(char c);
+  char& operator[](size_t index);
+  const char& operator[](size_t index) const;
+
+  size_t size() const { return length; }
+  const char* c_str() const { return buffer; }
+
+  size_t find(const string_t& str, size_t pos = 0) const;
+  string_t replace_all(const string_t& find, const string_t& rep) const;  // does not exist in std::string
+  string_t substr(size_t pos, size_t len = -1) const;
+
+  // these functions do not exist in std::string:
+
+  static string_t from_int(int val);
+  static string_t hex_from_int(int val);
+  static string_t from_float(float val);
+
+  int to_int() const;
+  float to_float() const;
+
+  string_t upper() const;
+  string_t lower() const;
+  string_t ltrim() const;
+  string_t rtrim() const;
+  string_t trim() const;
+  string_t lset(size_t len, const string_t& c) const;
+  string_t rset(size_t len, const string_t& c) const;
+
+  string_t strip_ext() const;
+  string_t strip_path() const;
+  string_t extract_ext() const;
+  string_t extract_path() const;
+  string_t real_path() const;
+
+  static string_t read(const string_t& filename);
+  void write(const string_t& filename, bool append = true) const;
+
+  vector_t<string_t> split(const string_t& delim) const;
+private:
+    char*   buffer;
+    size_t  length;
+    size_t  bufferSize;
+};
+
+inline string_t::string_t(const char* s) {
+  length = strlen(s);
+  bufferSize = sizeof(char)*(length+1);
+  buffer = (char*)malloc(bufferSize);
+  strcpy(buffer, s);
+}
+
+inline string_t::string_t(size_t n, char c) {
+  this->length = n;
+  bufferSize = sizeof(char)*(length+1);
+  buffer = (char*)malloc(bufferSize);
+  memset(buffer, (int)c, length);
+  buffer[length] = '\0';
+}
+
+inline string_t::string_t(const string_t& str) {
+  length = str.length;
+  bufferSize = sizeof(char)*(length+1);
+  buffer = (char*)malloc(bufferSize);
+  strcpy(buffer, str.buffer);
+}
+
+inline string_t::~string_t() {
+  free(buffer);
+}
+
+inline bool string_t::operator==(const string_t& other) const {
+  return strcmp(buffer, other.buffer) == 0;
+}
+
+inline bool string_t::operator!=(const string_t& other) const {
+  return strcmp(buffer, other.buffer) != 0;
+}
+
+inline bool string_t::operator<(const string_t& other) const {
+  return strcmp(buffer, other.buffer) < 0;
+}
+
+inline bool string_t::operator>(const string_t& other) const {
+  return strcmp(buffer, other.buffer) > 0;
+}
+
+inline string_t string_t::operator+(const string_t& other) const {
+  char* buf = (char*)malloc(length + other.length + 1);
+  strcpy(buf, buffer);
+  strcat(buf, other.buffer);
+  string_t str(buf);
+  free(buf);
+  return str;
+}
+
+inline string_t string_t::operator+(char c) const {
+  char s[2] = {c, '\0'};
+  return *this + s;
+}
+
+inline string_t& string_t::operator=(const string_t& other) {
+  if ( bufferSize < other.length + 1 ) {
+    bufferSize = sizeof(char)*(other.length+1);
+    free(buffer);
+    buffer = (char*)malloc(bufferSize);
+  }
+  length = other.length;
+  strcpy(buffer, other.buffer);
+  return *this;
+}
+
+inline string_t& string_t::operator=(char c) {
+  char s[2] = {c, '\0'};
+  return *this = s;
+}
+
+inline string_t& string_t::operator+=(const string_t& other) {
+  return *this = *this + other;
+}
+
+inline string_t& string_t::operator+=(char c) {
+  char s[2] = {c, '\0'};
+  return *this += s;
+}
+
+inline char& string_t::operator[](size_t index) {
+  return buffer[index];
+}
+
+inline const char& string_t::operator[](size_t index) const {
+  return buffer[index];
+}
+
+inline size_t string_t::find(const string_t& str, size_t pos) const {
+  const char* p = strstr(&buffer[pos], str.buffer);
+  if ( p == NULL )
+    return -1;
+  else
+    return (p - buffer);
+}
+
+inline string_t string_t::replace_all(const string_t& find, const string_t& rep) const {
+  string_t str;
+
+  // if string is not found, return unmodified string
+  if ( !strstr(buffer, find.buffer) ) return *this;
+
+  // replace all ocurrences
+  const char* p = NULL;
+  const char* lastp = buffer;
+  while ( (p = strstr(lastp, find.buffer)) ) {
+    // copy chars until p
+    while ( lastp != p ) {
+      str += *lastp;
+      lastp++;
+    }
+
+    // copy replacement chars
+    for ( size_t i = 0; i < rep.length; i++ ) {
+      str += rep.buffer[i];
+    }
+
+    // move lastp to after the replaced string
+    lastp += find.length;
+  }
+
+  // copy remaining chars
+  while ( *lastp != '\0' ) {
+    str += *lastp;
+    lastp++;
+  }
+
+  return str;
+}
+  
+inline string_t string_t::substr(size_t pos, size_t len) const {
+  if ( len == -1 ) len = size() - pos;
+  char* buf = (char*)malloc(len+1);
+  strncpy(buf, &buffer[pos], len);
+  buf[len] = '\0';
+  string_t str(buf);
+  free(buf);
+  return str;
+}
+
+inline string_t string_t::from_int(int val) {
+  char buf[32];
+  sprintf(buf, "%i", val);
+  return string_t(buf);
+}
+
+inline string_t string_t::hex_from_int(int val) {
+  char buf[32];
+  sprintf(buf, "%x", val);
+  return string_t(buf);
+}
+
+inline string_t string_t::from_float(float val) {
+  char buf[32];
+  sprintf(buf, "%f", val);
+  return string_t(buf);
+}
+
+inline int string_t::to_int() const {
+  int ret = 0;
+  sscanf(buffer, "%i", &ret);
+  return ret;
+}
+
+inline float string_t::to_float() const {
+  float ret = 0;
+  sscanf(buffer, "%f", &ret);
+  return ret;
+}
+
+inline string_t string_t::upper() const {
+  string_t str;
+  for ( size_t i = 0; i < length; i++ )
+    str += toupper(buffer[i]);
+  return str;
+}
+
+inline string_t string_t::lower() const {
+  string_t str;
+  for ( size_t i = 0; i < length; i++ )
+    str += tolower(buffer[i]);
+  return str;
+}
+
+inline string_t string_t::ltrim() const {
+  // count spaces at the beginning
+  size_t i = 0;
+  while ( i < length && isspace(buffer[i]) ) i++;
+
+  // return trimmed string
+  return substr(i);
+}
+
+inline string_t string_t::rtrim() const {
+  // look for first non space on the right
+  int i = length - 1;
+  int pos = -1;
+  while ( i > 0 && pos == -1 ) {
+    if ( !isspace(buffer[i]) ) pos = i+1;
+    i--;
+  }
+
+  if ( pos == -1 ) pos = length;
+
+  // return trimmed string
+  return substr(0, pos);
+}
+
+inline string_t string_t::trim() const {
+  return ltrim().rtrim();
+}
+
+inline string_t string_t::lset(size_t len, const string_t& c) const {
+  string_t str;
+  for ( int i = 0; i < len - length; i++ )
+    str += c.buffer[0];
+  str += substr(0, len);
+  return str;
+}
+
+inline string_t string_t::rset(size_t len, const string_t& c) const {
+  string_t str = substr(0, len);
+  for ( size_t i = length; i < len; i++)
+    str += c.buffer[0];
+  return str;
+}
+
+inline string_t string_t::strip_ext() const {
+  // find last "."
+  const char* dotp = strrchr(buffer, '.');
+
+  // if it contains no extension, return unmodified filename
+  if ( dotp == NULL ) return *this;
+
+  // copy characters before the last "."
+  string_t str;
+  const char* p = buffer;
+  while ( p != dotp ) {
+    str += *p;
+    p++;
+  }
+
+  return str;
+}
+
+inline string_t string_t::strip_path() const {
+  // replace "\" with "/"
+  string_t filename = replace_all("\\", "/");
+
+  // find last "/"
+  const char* slashp = strrchr(filename.buffer, '/');
+
+  // if it contains no path, return unmodified filename
+  if ( slashp == NULL ) return *this;
+
+  // copy all characters after the last "/"
+  string_t str;
+  slashp++;   // Skip "/"
+  while ( *slashp != '\0' ) {
+    str += *slashp;
+    slashp++;
+  }
+
+  return str;
+}
+
+inline string_t string_t::extract_ext() const {
+  // find last "."
+  const char* dotp = strrchr(buffer, '.');
+
+  // if it contains no extension, return empty string
+  if ( dotp == NULL ) return "";
+
+  // Copy characters after the last "."
+  string_t str;
+  dotp++; // Skip "."
+  while ( *dotp != '\0' ) {
+    str += *dotp;
+    dotp++;
+  }
+
+  return str;
+}
+
+inline string_t string_t::extract_path() const {
+  // replace "\" with "/"
+  string_t filename = replace_all("\\", "/");
+
+  // find last "/"
+  const char* slashp = strrchr(filename.buffer, '/');
+
+  // if it contains no path, return empty string
+  if ( slashp == NULL ) return "";
+
+  // copy all characters before the last "/"
+  string_t str = "";
+  const char* p = filename.buffer;
+  while ( p != slashp ) {
+    str += *p;
+    p++;
+  }
+
+  return str;
+}
+
+inline string_t string_t::real_path() const {
+  char path[FILENAME_MAX];
+  realpath(buffer, path);
+  return string_t(path);
+}
+
+inline string_t string_t::read(const string_t& filename) {
+  // open file to read
+  FILE* f = fopen(filename.buffer, "rb");
+
+  // if it does not exist, return empty string
+  if ( f == NULL ) return "";
+
+  // get file size
+  fseek(f, 0, SEEK_END);
+  long size = ftell(f);
+  fseek(f, 0, SEEK_SET);
+
+  // allocate contents in a buffer
+  char* buf = (char*)malloc(size+1);
+  fread(buf, sizeof(char), size, f);
+  buf[size] = '\0';
+
+  // copy buffer into string
+  string_t str = buf;
+
+  // free buffer
+  free(buf);
+
+  // return string
+  return str;
+}
+
+inline void string_t::write(const string_t& filename, bool append) const {
+  // open file to write or append
+  FILE* f = fopen(filename.buffer, append ? "ab" : "wb");
+
+  // if it could not be opened, return
+  if ( f == NULL ) return;
+
+  // write string buffer
+  fwrite(buffer, sizeof(char), length, f);
+
+  // close file
+  fclose(f);
+}
+
+inline vector_t<string_t> string_t::split(const string_t& delim) const {
+  vector_t<string_t> arr;
+
+  // return empty array if length = 0 or delim = 0
+  if ( size() == 0 || delim.buffer[0] == 0) return arr;
+
+  // fill array
+  string_t str;
+  for ( int i = 0; i < size(); i++ ) {
+    char c = buffer[i];
+    if ( c == delim.buffer[0] ) {
+      arr.push_back(str);
+      str = "";
+    } else {
+      str += c;
+    }
+  }
+  arr.push_back(str);
+
+  return arr;
+}
+
+#endif // CORE_STRING_H
