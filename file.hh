@@ -1,10 +1,10 @@
-#ifndef SWAN_FILE_H
-#define SWAN_FILE_H
+#ifndef SWAN_FILE_INCLUDED
+#define SWAN_FILE_INCLUDED
 
+#include "string.hh"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <string>
 #include <sys/stat.h>
 
 #if defined _WIN32 && !defined S_ISDIR
@@ -42,8 +42,8 @@ namespace swan
     unsigned long long readuint64();
     float readfloat();
     double readdouble();
-    std::string readcstring();
-    std::string readcline();
+    string_t readcstring();
+    string_t readcline();
     size_t readbytes(void* buffer, size_t count) { return fread(buffer, 1, count, handle); }
 
     void writechar(char v) { fwrite(&v, 1, sizeof(char), handle); }
@@ -57,7 +57,7 @@ namespace swan
     void writefloat(float v) { fwrite(&v, 1, sizeof(float), handle); }
     void writedouble(double v) { fwrite(&v, 1, sizeof(double), handle); }
     void writecstring(const char* v) { fwrite(v, strlen(v)+1, sizeof(char), handle); }
-    void writecline(const char* v) { std::string str = std::string(v) + "\r\n"; fwrite(str.c_str(), str.length(), sizeof(char), handle); }
+    void writecline(const char* v) { string_t str = string_t(v) + "\r\n"; fwrite(str.c_str(), str.length(), sizeof(char), handle); }
     size_t writebytes(const void* buffer, size_t count) { return fwrite(buffer, 1, count, handle); }
   private:
     FILE* handle;
@@ -66,7 +66,7 @@ namespace swan
 
   inline file_t::file_t(const char* filename, mode m)
   {
-    std::string attr;
+    string_t attr;
     switch ( m )
     {
       case read:
@@ -164,9 +164,9 @@ namespace swan
     return v;
   }
 
-  inline std::string file_t::readcstring()
+  inline string_t file_t::readcstring()
   {
-    std::string str;
+    string_t str;
     char c = readchar();
     while ( c != 0 )
     {
@@ -176,9 +176,9 @@ namespace swan
     return str;
   }
 
-  inline std::string file_t::readcline()
+  inline string_t file_t::readcline()
   {
-    std::string str;
+    string_t str;
     char c = readchar();
     while ( c != '\r' && c != '\n' )
     {
@@ -258,5 +258,5 @@ namespace swan
 
 } // namespace swan
 
-#endif // SWAN_FILE_H
+#endif // SWAN_FILE_INCLUDED
 

@@ -1,28 +1,29 @@
-#include "../dir" // on visual studio, if you include this file dirent.h must be present
+#include "../dir.hh"
 #include <iostream>
+
+using namespace swan;
 
 int main()
 {
-  swan::dir::create("_test_tmp");
-  swan::dir::remove("_test_tmp");
+  dir::create("_test_tmp");
+  dir::remove("_test_tmp");
 
-  std::cout << "current dir: " << swan::dir::current() << std::endl;
+  std::cout << "current dir: " << dir::current().c_str() << std::endl;
   std::cout << "contents:" << std::endl;
-  std::vector<std::string> contents = swan::dir::contents(".");
-  for ( std::vector<std::string>::const_iterator it = contents.begin(); it != contents.end(); ++it )
+  vector_t<string_t> contents = dir::contents(".");
+  for (vector_t<string_t>::const_iterator it = contents.begin(); it != contents.end(); ++it)
   {
-    std::cout << " " << *it << std::endl;
+    std::cout << " " << (*it).c_str() << std::endl;
   }
 
-  swan::dir::change("..");
-  std::cout << "current dir: " + swan::dir::current() << std::endl;
+  dir::change("..");
+  std::cout << "current dir: " << dir::current().c_str() << std::endl;
   std::cout << "contents:" << std::endl;
-  contents = swan::dir::contents(".");
-  for ( std::vector<std::string>::const_iterator it = contents.begin(); it != contents.end(); ++it )
+  contents = dir::contents(".");
+  for (vector_t<string_t>::const_iterator it = contents.begin(); it != contents.end(); ++it)
   {
-    std::cout << " " << *it << std::endl;
+    std::cout << " " << (*it).c_str() << std::endl;
   }
   
   return 0;
 }
-

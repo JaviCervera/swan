@@ -1,11 +1,12 @@
 // note: on visual studio, if you include this file dirent.h must be present
 
-#ifndef SWAN_DIR_H
-#define SWAN_DIR_H
+#ifndef SWAN_DIR_INCLUDED
+#define SWAN_DIR_INCLUDED
 
+#include "string.hh"
+#include "vector.hh"
 #include <stdio.h>
-#include <string>
-#include <vector>
+#include <stdlib.h>
 
 #ifndef _MSC_VER
 #include <dirent.h>
@@ -22,21 +23,25 @@
 //#undef DeleteFile
 #endif
 
+#ifdef _WIN32
+#define realpath(N,R) _fullpath((R),(N),_MAX_PATH)
+#endif
+
 namespace swan
 {
   namespace dir
   {
-    inline std::vector<std::string> contents(const char* path)
+    inline vector_t<string_t> contents(const char* path)
     {
-      std::vector<std::string> arr;
+      vector_t<string_t> arr;
 
       // open directory
       DIR* d = (DIR*)opendir(path);
-      if ( d == NULL ) return arr;
+      if (d == NULL) return arr;
 
       // copy directory contents
       struct dirent* entry;
-      while ( (entry = (struct dirent*)readdir(d)) )
+      while (entry = (struct dirent*)readdir(d))
       {
         arr.push_back(entry->d_name);
       }
@@ -47,11 +52,11 @@ namespace swan
       return arr;
     }
 
-    inline std::string current()
+    inline string_t current()
     {
       char buf[FILENAME_MAX];
       _getcwd(buf, FILENAME_MAX);
-      return std::string(buf);
+      return string_t(buf);
     }
 
     inline bool change(const char* path)
@@ -72,8 +77,14 @@ namespace swan
     {
       _rmdir(path);
     }
+
+    inline string_t real_path(const char* path)
+    {
+      char out_path[FILENAME_MAX];
+      realpath(path, out_path);
+      return string_t(out_path);
+    }
   } // namespace dir
 } // namespace swan
 
-#endif // SWAN_DIR_H
-
+#endif // SWAN_DIR_INCLUDED

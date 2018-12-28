@@ -1,4 +1,4 @@
-#include "../sharedlib"
+#include "../sharedlib.hh"
 #include <iostream>
 
 // note: this example can only be run on windows currently
@@ -12,10 +12,10 @@ MessageBoxPtr MessageBox;
 int main()
 {
   swan::sharedlib_t lib("user32");
-  if ( lib.isopen() )
+  if (lib.isopen())
   {
     MessageBox = reinterpret_cast<MessageBoxPtr>(lib.funcptr("MessageBoxA"));
-    if ( !MessageBox )
+    if (!MessageBox)
     {
       std::cout << "could not find 'MessageBoxA' function within 'user32.dll'" << std::endl;
     }

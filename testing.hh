@@ -1,6 +1,7 @@
 // inspired by jasmine library: https://jasmine.github.io
 
-#pragma once
+#ifndef SWAN_TESTING_INCLUDED
+#define SWAN_TESTING_INCLUDED
 
 #include <math.h>
 #include <iomanip>
@@ -276,5 +277,7 @@ namespace swan
       print((" -> " + ss.str()).c_str(), false);
       return res;
     }
-  } // namespace testingprintLine
+  } // namespace testing
 } // namespace swan
+
+#endif // SWAN_TESTING_INCLUDED

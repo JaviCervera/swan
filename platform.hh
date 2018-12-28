@@ -1,9 +1,9 @@
-#ifndef SWAN_PLATFORM_H
-#define SWAN_PLATFORM_H
+#ifndef SWAN_PLATFORM_INCLUDED
+#define SWAN_PLATFORM_INCLUDED
 
+#include "string.hh"
 #include <stdio.h>
 #include <stdlib.h>
-#include <string>
 
 #ifdef _WIN32
 #define popen _popen
@@ -34,9 +34,9 @@ namespace swan
 #endif
     }
 
-    inline std::string getenv(const char* var)
+    inline string_t getenv(const char* var)
     {
-      std::string env;
+      string_t env;
 #ifdef _MSC_VER
       char* buffer = NULL;
       size_t size;
@@ -58,9 +58,9 @@ namespace swan
       return system(command);
     }
 
-    inline std::string run(const char* program)
+    inline string_t run(const char* program)
     {
-      std::string output;
+      string_t output;
 
       // open pipe
       FILE* pipe = popen(program, "rt");
@@ -91,4 +91,4 @@ namespace swan
 #undef pclose
 #endif
 
-#endif // SWAN_PLATFORM_H
+#endif // SWAN_PLATFORM_INCLUDED

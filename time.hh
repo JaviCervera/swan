@@ -1,7 +1,7 @@
 // note: on windows, you need to link to winmm to use time module
 
-#ifndef SWAN_TIME_H
-#define SWAN_TIME_H
+#ifndef SWAN_TIME_INCLUDED
+#define SWAN_TIME_INCLUDED
 
 #if defined(_WIN32)
 //#define WIN32_LEAN_AND_MEAN
@@ -98,5 +98,4 @@ namespace swan
   } // namespace time
 } // namespace swan
 
-#endif // SWAN_TIME_H
-
+#endif // SWAN_TIME_INCLUDED
