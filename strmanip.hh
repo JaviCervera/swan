@@ -76,19 +76,26 @@ namespace swan
 
     inline string_t stripdir(const string_t& filename)
     {
-      string_t filenameCopy = replace_all(filename, "\\", "/");
-      return filenameCopy.substr(filenameCopy.rfind('/')+1, filenameCopy.length() - filenameCopy.rfind('/')-1);
+      size_t find_pos = filename.rfind('\\');
+      if (find_pos == string_t::npos) find_pos = filename.rfind('/');
+      return (find_pos != string_t::npos)
+        ? filename.substr(find_pos + 1, filename.length() - find_pos - 1)
+        : filename;
     }
 
     inline string_t extractext(const string_t& filename)
     {
-      return filename.substr(filename.rfind('.')+1, filename.length() - filename.rfind('.')-1);
+      size_t find_pos = filename.rfind('.');
+      return (find_pos != string_t::npos)
+        ? filename.substr(find_pos + 1, filename.length() - find_pos - 1)
+        : filename;
     }
 
     inline string_t extractdir(const string_t& filename)
     {
-      string_t filenameCopy = replace_all(filename, "\\", "/");
-      return filenameCopy.substr(0, filenameCopy.rfind('/'));
+      size_t find_pos = filename.rfind('\\');
+      if (find_pos == string_t::npos) find_pos = filename.rfind('/');
+      return filename.substr(0, find_pos);
     }
 
     inline string_t read(const string_t& filename)

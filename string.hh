@@ -52,11 +52,6 @@ namespace swan
       static const char* strrstr(const char* str, const char* find, size_t endpos = npos);
   };
 
-  inline string_t operator+(const char* cstr, const string_t& str)
-  {
-    return string_t(cstr) + str;
-  }
-
   inline string_t::string_t(const char* s)
   : buffer(0), buffer_size(0), len(0)
   {
@@ -243,6 +238,11 @@ namespace swan
       if (strncmp(cp, find, len) == 0) return cp;
     }
     return 0;
+  }
+
+  inline string_t operator+(const char* cstr, const string_t& str)
+  {
+    return string_t(cstr) + str;
   }
 } // namespace swan
 

@@ -200,21 +200,22 @@ namespace swan
     return str;
   }
 
-  enum filetype {
-    unknown,
-    file,
-    dir
+  enum filetype
+  {
+    funknown,
+    ffile,
+    fdir
   };
 
   inline filetype filetype(const char* filename)
   {
     struct stat statbuf;
     if ( stat(filename, &statbuf) == -1 )
-      return unknown;
+      return funknown;
     else if ( S_ISDIR(statbuf.st_mode) )
-      return dir;
+      return fdir;
     else
-      return file;
+      return ffile;
   }
 
   inline size_t filesize(const char* filename)

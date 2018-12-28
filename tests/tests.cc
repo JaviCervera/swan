@@ -1,21 +1,11 @@
-// note: this example must be compiled with c++11 upwards
+#include "test_dir.hh"
+#include "test_file.hh"
 
-#include "../dir"
-#include "../testing"
-#include <string>
-#include <vector>
-
-int main()
+int main(int argc, const char* argv[])
 {
-  // dir
-  swan::testing::describe("running dir tests", []()
-  {
-    swan::testing::println(("current dir is '" + swan::dir::current() + "'").c_str());
+  test_dir d(swan::strmanip::stripdir(argv[0]));
+  test_file f;
 
-    swan::testing::it("checking dir contents", []()
-    {
-      std::vector<std::string> expected_dir = { "tests.cc" };
-      swan::testing::expect_noprint(swan::dir::contents(swan::dir::current().c_str())).tobeobject(expected_dir);
-    });
-  });
+  d.run();
+  f.run();
 }

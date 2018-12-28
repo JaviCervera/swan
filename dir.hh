@@ -31,12 +31,12 @@ namespace swan
 {
   namespace dir
   {
-    inline vector_t<string_t> contents(const char* path)
+    inline vector_t<string_t> contents(const string_t& path)
     {
       vector_t<string_t> arr;
 
       // open directory
-      DIR* d = (DIR*)opendir(path);
+      DIR* d = (DIR*)opendir(path.c_str());
       if (d == NULL) return arr;
 
       // copy directory contents
@@ -59,29 +59,29 @@ namespace swan
       return string_t(buf);
     }
 
-    inline bool change(const char* path)
+    inline bool change(const string_t& path)
     {
-      return _chdir(path) == 0;
+      return _chdir(path.c_str()) == 0;
     }
 
-    inline void create(const char* path)
+    inline void create(const string_t& path)
     {
 #ifdef _WIN32
-      _mkdir(path);
+      _mkdir(path.c_str());
 #else
-      _mkdir(path, S_IRWXU | S_IRGRP | S_IXGRP);
+      _mkdir(path.c_str(), S_IRWXU | S_IRGRP | S_IXGRP);
 #endif
     }
 
-    inline void remove(const char* path)
+    inline void remove(const string_t& path)
     {
-      _rmdir(path);
+      _rmdir(path.c_str());
     }
 
-    inline string_t real_path(const char* path)
+    inline string_t real_path(const string_t& path)
     {
       char out_path[FILENAME_MAX];
-      realpath(path, out_path);
+      realpath(path.c_str(), out_path);
       return string_t(out_path);
     }
   } // namespace dir

@@ -18,34 +18,34 @@ namespace swan
     vector_t();
     vector_t(size_t n, const T& val = T());
     vector_t(const vector_t<T>& other);
-    ~vector_t() { free(mBuffer); }
+    ~vector_t() { free(m_buffer); }
 
     vector_t<T>&  operator=(const vector_t<T>& other);
-    T&            operator[](size_t index)                    { return mBuffer[index]; }
-    const T&      operator[](size_t index)              const { return mBuffer[index]; }
+    T&            operator[](size_t index)                    { return m_buffer[index]; }
+    const T&      operator[](size_t index)              const { return m_buffer[index]; }
 
-    iterator       begin()                                    { return mBuffer; }
-    const_iterator begin()                              const { return mBuffer; }
-    iterator       end()                                      { return mBuffer + mSize; }
-    const_iterator end()                                const { return mBuffer + mSize; }
-    T&             data()                                     { return mBuffer; }
-    const T&       data()                               const { return mBuffer; }
-    size_t         size()                               const { return mSize; }
+    iterator       begin()                                    { return m_buffer; }
+    const_iterator begin()                              const { return m_buffer; }
+    iterator       end()                                      { return m_buffer + m_size; }
+    const_iterator end()                                const { return m_buffer + m_size; }
+    T&             data()                                     { return m_buffer; }
+    const T&       data()                               const { return m_buffer; }
+    size_t         size()                               const { return m_size; }
     void           push_back(const T& elem);
     void           pop_back()                                 { erase(size()-1); }
-    T&             back()                                     { return mBuffer[mSize-1]; }
-    const T&       back()                               const { return mBuffer[mSize-1]; }
-    T&             front()                                    { return mBuffer[0]; }
-    const T&       front()                              const { return mBuffer[0]; }
+    T&             back()                                     { return m_buffer[m_size-1]; }
+    const T&       back()                               const { return m_buffer[m_size-1]; }
+    T&             front()                                    { return m_buffer[0]; }
+    const T&       front()                              const { return m_buffer[0]; }
     void           erase(size_t index);
     void           erase_elem(const T& elem);
     void           erase_elems(const T& elem);
     void           clear();
     void           resize(size_t n, const T& val = T());
   private:
-    T*      mBuffer;
-    size_t  mSize;
-    size_t  mCapacity;
+    T*      m_buffer;
+    size_t  m_size;
+    size_t  m_capacity;
   };
 
   #define SWAN_CAPACITY_INC 128
@@ -53,69 +53,70 @@ namespace swan
   template <typename T>
   vector_t<T>::vector_t()
   {
-    mBuffer = (T*)calloc(0, sizeof(T));
-    mSize = 0;
-    mCapacity = 0;
+    m_buffer = (T*)calloc(0, sizeof(T));
+    m_size = 0;
+    m_capacity = 0;
   }
 
   template <typename T>
   vector_t<T>::vector_t(size_t n, const T& val)
   {
-    mCapacity = (n > 0 && n < SWAN_CAPACITY_INC) ? SWAN_CAPACITY_INC : n;
-    mBuffer = (T*)calloc(mCapacity, sizeof(T));
-    mSize = n;
-    for (size_t i = 0; i < n; ++i) mBuffer[i] = val;
+    m_capacity = (n > 0 && n < SWAN_CAPACITY_INC) ? SWAN_CAPACITY_INC : n;
+    m_buffer = (T*)calloc(m_capacity, sizeof(T));
+    m_size = n;
+    for (size_t i = 0; i < n; ++i) m_buffer[i] = val;
   }
 
   template <typename T>
   vector_t<T>::vector_t(const vector_t<T>& other)
   {
-    mBuffer = (T*)calloc(other.mCapacity, sizeof(T));
-    mSize = other.mSize;
-    mCapacity = other.mCapacity;
-    for (size_t i = 0; i < other.mSize; ++i) mBuffer[i] = other.mBuffer[i];
+    m_buffer = (T*)calloc(other.m_capacity, sizeof(T));
+    m_size = other.m_size;
+    m_capacity = other.m_capacity;
+    for (size_t i = 0; i < other.m_size; ++i) m_buffer[i] = other.m_buffer[i];
   }
 
   template <typename T>
   vector_t<T>& vector_t<T>::operator=(const vector_t<T>& other)
   {
-    free(mBuffer);
-    mBuffer = (T*)calloc(other.mCapacity, sizeof(T));
-    mSize = other.mSize;
-    mCapacity = other.mCapacity;
-    for (size_t i = 0; i < other.mSize; ++i) mBuffer[i] = other.mBuffer[i];
+    free(m_buffer);
+    m_buffer = (T*)calloc(other.m_capacity, sizeof(T));
+    m_size = other.m_size;
+    m_capacity = other.m_capacity;
+    for (size_t i = 0; i < other.m_size; ++i) m_buffer[i] = other.m_buffer[i];
     return *this;
   }
 
   template <typename T>
   void vector_t<T>::push_back(const T& elem)
   {
-    if ( mCapacity == mSize ) {
-      mCapacity += SWAN_CAPACITY_INC;
-      T* oldBuffer = mBuffer;
-      mBuffer = (T*)calloc(mCapacity, sizeof(T));
-      for (size_t i = 0; i < mSize; ++i) mBuffer[i] = oldBuffer[i];
+    if ( m_capacity == m_size )
+    {
+      m_capacity += SWAN_CAPACITY_INC;
+      T* oldBuffer = m_buffer;
+      m_buffer = (T*)calloc(m_capacity, sizeof(T));
+      for (size_t i = 0; i < m_size; ++i) m_buffer[i] = oldBuffer[i];
       free(oldBuffer);
     }
-    mBuffer[mSize++] = elem;
+    m_buffer[m_size++] = elem;
   }
 
   template <typename T>
   void vector_t<T>::erase(size_t index)
   {
-    for (size_t i = index+1; i < mSize; ++i)
+    for (size_t i = index+1; i < m_size; ++i)
     {
-      mBuffer[i-1] = mBuffer[i];
+      m_buffer[i-1] = m_buffer[i];
     }
-    --mSize;
+    --m_size;
   }
 
   template <typename T>
   void vector_t<T>::erase_elem(const T& elem)
   {
-    for (size_t i = 0; i < mSize; ++i)
+    for (size_t i = 0; i < m_size; ++i)
     {
-      if (mBuffer[i] == elem)
+      if (m_buffer[i] == elem)
       {
         erase(i);
         break;
@@ -127,9 +128,9 @@ namespace swan
   void vector_t<T>::erase_elems(const T& elem)
   {
     size_t i = 0;
-    while (i < mSize)
+    while (i < m_size)
     {
-      if (mBuffer[i] == elem)
+      if (m_buffer[i] == elem)
       {
         erase(i);
       }
@@ -143,32 +144,44 @@ namespace swan
   template <typename T>
   void vector_t<T>::clear()
   {
-    free(mBuffer);
-    mBuffer = (T*)calloc(SWAN_CAPACITY_INC, sizeof(T));
-    mSize = 0;
-    mCapacity = SWAN_CAPACITY_INC;
+    free(m_buffer);
+    m_buffer = (T*)calloc(SWAN_CAPACITY_INC, sizeof(T));
+    m_size = 0;
+    m_capacity = SWAN_CAPACITY_INC;
   }
 
   template <typename T>
   void vector_t<T>::resize(size_t n, const T& val)
   {
-    if (n < mSize)
+    if (n < m_size)
     {
-      mSize = n;
+      m_size = n;
     }
-    else if (n > mSize)
+    else if (n > m_size)
     {
-      if (n > mCapacity)
+      if (n > m_capacity)
       {
-        mCapacity += (n - mCapacity < SWAN_CAPACITY_INC) ? SWAN_CAPACITY_INC : (n - mCapacity);
-        T* oldBuffer = mBuffer;
-        mBuffer = (T*)calloc(mCapacity, sizeof(T));
-        for (size_t i = 0; i < mSize; ++i) mBuffer[i] = oldBuffer[i];
+        m_capacity += (n - m_capacity < SWAN_CAPACITY_INC) ? SWAN_CAPACITY_INC : (n - m_capacity);
+        T* oldBuffer = m_buffer;
+        m_buffer = (T*)calloc(m_capacity, sizeof(T));
+        for (size_t i = 0; i < m_size; ++i) m_buffer[i] = oldBuffer[i];
         free(oldBuffer);
       }
-      for (size_t i = mSize; i < n; ++i) mBuffer[i] = val;
-      mSize = n;
+      for (size_t i = m_size; i < n; ++i) m_buffer[i] = val;
+      m_size = n;
     }
+  }
+
+  template <typename T>
+  bool operator==(const vector_t<T>& lhs, const vector_t<T>& rhs)
+  {
+    if (lhs.size() != rhs.size()) return false;
+    const size_t len = lhs.size();
+    for (size_t i = 0; i < len; ++i)
+    {
+      if (!(lhs[i] == rhs[i])) return false;
+    }
+    return true;
   }
 } // namespace swan
 
