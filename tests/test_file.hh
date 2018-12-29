@@ -29,9 +29,9 @@ public:
 
   test_file() : testcase_t("file")
   {
-    add_test(test_func(&test_size), "Checking that test_file.hh size is not zero");
-    add_test(test_func(&test_copynotexists), "Checking that test_file_copy.hh does not exist");
-    add_test(test_func(&test_copy), "Checking filecopy");
-    add_test(test_func(&test_remove), "Checking fileremove");
+    add_test(test_func(&test_file::test_size), "Checking that test_file.hh size is not zero");
+    add_test(test_func(&test_file::test_copynotexists), "Checking that test_file_copy.hh does not exist");
+    add_test(test_func(&test_file::test_copy), "Checking filecopy");
+    add_test(test_func(&test_file::test_remove), "Checking fileremove");
   }
 };

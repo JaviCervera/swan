@@ -41,7 +41,7 @@ namespace swan
 
       // copy directory contents
       struct dirent* entry;
-      while (entry = (struct dirent*)readdir(d))
+      while ((entry = (struct dirent*)readdir(d)))
       {
         arr.push_back(entry->d_name);
       }

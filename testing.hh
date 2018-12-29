@@ -71,7 +71,7 @@ namespace swan
 
   inline void testcase_t::std_print(const char* s)
   {
-    printf(s);
+    printf("%s", s);
   }
 } // namespace swan
 
