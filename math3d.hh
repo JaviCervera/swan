@@ -13,16 +13,15 @@ namespace swan
   struct quat_t;
   struct mat4_t;
 
-  inline float deg2rad(float deg) { return deg * 0.0174533f; }
-  inline float rad2deg(float rad) { return rad * 57.2958f; }
+  inline float deg2rad(float deg) { return deg * 0.0174532925f; }
+  inline float rad2deg(float rad) { return rad * 57.2957795f; }
 
   struct vec2_t
   {
     float x, y;
-    vec2_t() : x(0), y(0) {}
+    vec2_t(float x = 0, float y = 0) : x(x), y(y) {}
     vec2_t(const vec2_t& other) : x(other.x), y(other.y) {}
     vec2_t(const vec3_t& other);
-    vec2_t(float x, float y) : x(x), y(y) {}
     bool operator==(const vec2_t& other) const { return x == other.x && y == other.y; }
     bool operator!=(const vec2_t& other) const { return x != other.x || y != other.y; }
     vec2_t& operator=(const vec2_t& other) { x = other.x; y = other.y; return *this; }
@@ -42,20 +41,27 @@ namespace swan
     vec2_t& operator-=(float scalar) { x -= scalar; y -= scalar; return *this; }
     vec2_t& operator*=(float scalar) { x *= scalar; y *= scalar; return *this; }
     vec2_t& operator/=(float scalar) { x /= scalar; y /= scalar; return *this; }
-    float length() const { return sqrt(dot(*this)); }
-    vec2_t norm() const { float invlength = 1.0f / length(); return vec2_t(x * invlength, y * invlength); }
+    float sq_length() const { return dot(*this); }
+    float length() const { return sqrt(sq_length()); }
+    vec2_t norm() const;
     float dot(const vec2_t& other) const { return x * other.x + y * other.y; }
-    vec2_t mix(const vec2_t& other, float t) const { return vec2_t(x + (other.x - x) * t, y + (other.y - y) * t); }
+    vec2_t mix(const vec2_t& other, float t) const { return *this + (other - *this) * t; }
   };
+
+  inline vec2_t vec2_t::norm() const
+  {
+    const float ln = length();
+    const float iln = ln > 0 ? 1.0f / ln : 0;
+    return *this * iln;
+  }
 
   struct vec3_t
   {
     float x, y, z;
-    vec3_t() : x(0), y(0), z(0) {}
+    vec3_t(float x = 0, float y = 0, float z = 0) : x(x), y(y), z(z) {}
     vec3_t(const vec2_t& other, float z) : x(other.x), y(other.y), z(z) {}
     vec3_t(const vec3_t& other) : x(other.x), y(other.y), z(other.z) {}
     vec3_t(const vec4_t& other);
-    vec3_t(float x, float y, float z) : x(x), y(y), z(z) {}
     bool operator==(const vec3_t& other) const { return x == other.x && y == other.y && z == other.z; }
     bool operator!=(const vec3_t& other) const { return x != other.x || y != other.y || z != other.z; }
     vec3_t& operator=(const vec3_t& other) { x = other.x; y = other.y; z = other.z; return *this; }
@@ -77,21 +83,27 @@ namespace swan
     vec3_t& operator/=(float scalar) { x /= scalar; y /= scalar; z /= scalar; return *this; }
     float sq_length() const { return dot(*this); }
     float length() const { return sqrt(sq_length()); }
-    vec3_t norm() const { float invlength = 1.0f / length(); return vec3_t(x * invlength, y * invlength, z * invlength); }
+    vec3_t norm() const;
     float dot(const vec3_t& other) const { return x * other.x + y * other.y + z * other.z; }
     vec3_t cross(const vec3_t& other) const { return vec3_t(y*other.z - z*other.y, z*other.x - x*other.z, x*other.y - y*other.x); }
     vec3_t rad() const { return vec3_t(deg2rad(x), deg2rad(y), deg2rad(z)); }
     vec3_t deg() const { return vec3_t(rad2deg(x), rad2deg(y), rad2deg(z)); }
-    vec3_t mix(const vec3_t& other, float t) const { return vec3_t(x + (other.x - x) * t, y + (other.y - y) * t, z + (other.z - z) * t); }
+    vec3_t mix(const vec3_t& other, float t) const { return *this + (other - *this); }
   };
+
+  inline vec3_t vec3_t::norm() const
+  {
+    const float ln = length();
+    const float iln = ln > 0 ? 1.0f / ln : 0;
+    return *this * iln;
+  }
 
   struct vec4_t
   {
     float x, y, z, w;
-    vec4_t() : x(0), y(0), z(0), w(0) {}
+    vec4_t(float x = 0, float y = 0, float z = 0, float w = 0) : x(x), y(y), z(z), w(w) {}
     vec4_t(const vec3_t& other, float w) : x(other.x), y(other.y), z(other.z), w(w) {}
     vec4_t(const vec4_t& other) : x(other.x), y(other.y), z(other.z), w(other.w) {}
-    vec4_t(float x, float y, float z, float w) : x(x), y(y), z(z), w(w) {}
     bool operator==(const vec4_t& other) const { return x == other.x && y == other.y && z == other.z && w == other.w; }
     bool operator!=(const vec4_t& other) const { return x != other.x || y != other.y || z != other.z || w != other.w; }
     vec4_t& operator=(const vec4_t& other) { x = other.x; y = other.y; z = other.z; w = other.w; return *this; }
@@ -112,10 +124,17 @@ namespace swan
     vec4_t& operator*=(float scalar) { x *= scalar; y *= scalar; z *= scalar; w *= scalar; return *this; }
     vec4_t& operator/=(float scalar) { x /= scalar; y /= scalar; z /= scalar; w /= scalar; return *this; }
     float length() const { return sqrt(dot(*this)); }
-    vec4_t norm() const { float invlength = 1.0f / length(); return vec4_t(x * invlength, y * invlength, z * invlength, w * invlength); }
+    vec4_t norm() const;
     float dot(const vec4_t& other) const { return x * other.x + y * other.y + z * other.z + w * other.w; }
-    vec4_t mix(const vec4_t& other, float t) const { return vec4_t(x + (other.x - x) * t, y + (other.y - y) * t, z + (other.z - z) * t, w + (other.w - w) * t); }
+    vec4_t mix(const vec4_t& other, float t) const { return *this + (other - *this) * t; }
   };
+
+  inline vec4_t vec4_t::norm() const
+  {
+    const float ln = length();
+    const float iln = ln > 0 ? 1.0f / ln : 0;
+    return *this * iln;
+  }
 
   inline vec2_t::vec2_t(const vec3_t& other) : x(other.x), y(other.y) {}
   inline vec3_t::vec3_t(const vec4_t& other) : x(other.x), y(other.y), z(other.z) {}
@@ -123,9 +142,8 @@ namespace swan
   struct quat_t
   {
     float w, x, y, z;
-    quat_t() : w(1), x(0), y(0), z(0) {}
+    quat_t(float w = 1, float x = 0, float y = 0, float z = 0) : w(w), x(x), y(y), z(z) {}
     quat_t(const quat_t& q) : w(q.w), x(q.x), y(q.y), z(q.z) {}
-    quat_t(float w, float x, float y, float z) : w(w), x(x), y(y), z(z) {}
     quat_t(float angle, const vec3_t& axis);
     quat_t(const vec3_t& euler);
     bool operator==(const quat_t& other) const { return w == other.w && x == other.x && y == other.y && z == other.z; }
@@ -229,7 +247,7 @@ namespace swan
   struct mat4_t
   {
     float m[16];
-    mat4_t() { memset(m, 0, sizeof(m)); m[0] = m[5] = m[10] = m[15] = 1; }
+    mat4_t(float id = 1) { memset(m, 0, sizeof(m)); m[0] = m[5] = m[10] = m[15] = id; }
     mat4_t(const mat4_t& other) { memcpy(m, other.m, sizeof(m)); }
     mat4_t(const float* values) { memcpy(this->m, values, sizeof(this->m)); }
     bool operator==(const mat4_t& other) const { for ( size_t i = 0; i < 16; ++i ) if ( m[i] != other.m[i] ) return false; return true; }
