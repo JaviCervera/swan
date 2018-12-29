@@ -28,18 +28,16 @@ namespace swan
     const_iterator begin()                              const { return m_buffer; }
     iterator       end()                                      { return m_buffer + m_size; }
     const_iterator end()                                const { return m_buffer + m_size; }
-    T&             data()                                     { return m_buffer; }
-    const T&       data()                               const { return m_buffer; }
+    T*             data()                                     { return m_buffer; }
+    const T*       data()                               const { return m_buffer; }
     size_t         size()                               const { return m_size; }
     void           push_back(const T& elem);
-    void           pop_back()                                 { erase(size()-1); }
+    void           pop_back()                                 { erase(end()-1); }
     T&             back()                                     { return m_buffer[m_size-1]; }
     const T&       back()                               const { return m_buffer[m_size-1]; }
     T&             front()                                    { return m_buffer[0]; }
     const T&       front()                              const { return m_buffer[0]; }
-    void           erase(size_t index);
-    void           erase_elem(const T& elem);
-    void           erase_elems(const T& elem);
+    iterator       erase(iterator it);
     void           clear();
     void           resize(size_t n, const T& val = T());
   private:
@@ -101,44 +99,17 @@ namespace swan
     m_buffer[m_size++] = elem;
   }
 
+  // todo: invoke object destructor
   template <typename T>
-  void vector_t<T>::erase(size_t index)
+  typename vector_t<T>::iterator vector_t<T>::erase(vector_t<T>::iterator it)
   {
+    size_t index = it - m_buffer;
     for (size_t i = index+1; i < m_size; ++i)
     {
       m_buffer[i-1] = m_buffer[i];
     }
     --m_size;
-  }
-
-  template <typename T>
-  void vector_t<T>::erase_elem(const T& elem)
-  {
-    for (size_t i = 0; i < m_size; ++i)
-    {
-      if (m_buffer[i] == elem)
-      {
-        erase(i);
-        break;
-      }
-    }
-  }
-
-  template <typename T>
-  void vector_t<T>::erase_elems(const T& elem)
-  {
-    size_t i = 0;
-    while (i < m_size)
-    {
-      if (m_buffer[i] == elem)
-      {
-        erase(i);
-      }
-      else
-      {
-        ++i;
-      }
-    }
+    return &m_buffer[index];
   }
 
   template <typename T>

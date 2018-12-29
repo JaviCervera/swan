@@ -230,7 +230,7 @@ namespace swan
     return str;
   }
 
-  const char* string_t::strrstr(const char* str, const char* find, size_t endofs)
+  inline const char* string_t::strrstr(const char* str, const char* find, size_t endofs)
   {
     if (endofs == npos) endofs = strlen(str);
     size_t len = strlen(find);
