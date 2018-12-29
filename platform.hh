@@ -12,16 +12,17 @@
 
 namespace swan
 {
+  enum platform_id
+  {
+    punknown,
+    pwindows,
+    pmacos,
+    plinux
+  };
+
   namespace platform
   {
-    enum platformid
-    {
-      pwindows,
-      pmacos,
-      plinux
-    };
-
-    inline platformid platformid()
+    inline platform_id id()
     {
 #if defined(_WIN32)
       return pwindows;
@@ -30,7 +31,7 @@ namespace swan
 #elif defined(__linux__)
       return plinux;
 #else
-      return 0;
+      return punknown;
 #endif
     }
 

@@ -1,6 +1,8 @@
+#ifndef SWAN_TEST_FILE_INCLUDED
+#define SWAN_TEST_FILE_INCLUDED
+
 #include "../file.hh"
 #include "../testing.hh"
-#include <iostream>
 
 class test_file : public swan::testcase_t
 {
@@ -35,3 +37,5 @@ public:
     add_test(test_func(&test_file::test_remove), "Checking fileremove");
   }
 };
+
+#endif // SWAN_TEST_FILE_INCLUDED

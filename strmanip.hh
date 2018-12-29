@@ -212,34 +212,6 @@ namespace swan
       out.resize(length, c);
       return out;
     }
-
-#ifdef SWAN_TIME_INCLUDED
-    inline string_t parsetimeinfo(const time::timeinfo_t& ti, bool parsedate = true, bool parsetime = true)
-    {
-      string_t str;
-      
-      if (parsedate)
-      {
-        str += lset(fromint(ti.year), 4, '0');
-        str += "/";
-        str += lset(fromint(ti.mon), 2, '0');
-        str += "/";
-        str +=  lset(fromint(ti.day), 2, '0');
-      }
-
-      if (parsetime)
-      {
-        if ( str != "" ) str += " ";
-        str += lset(fromint(ti.hour), 2, '0');
-        str += ":";
-        str += lset(fromint(ti.min), 2, '0');
-        str += ":";
-        str +=  lset(fromint(ti.sec), 2, '0');
-      }
-
-      return str;
-    }
-#endif
   } // namespace strmanip
 } // namespace swan
 

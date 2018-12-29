@@ -1,8 +1,11 @@
+#ifndef SWAN_TEST_DIR_INCLUDED
+#define SWAN_TEST_DIR_INCLUDED
+
+#include "../console.hh"
 #include "../dir.hh"
 #include "../file.hh"
 #include "../strmanip.hh"
 #include "../testing.hh"
-#include <iostream>
 
 using namespace swan;
 
@@ -11,7 +14,7 @@ class test_dir : public testcase_t
 public:
   void init()
   {
-    std::cout << "* Current dir is '" << dir::current().c_str() << "'" << std::endl;
+    console::println("* Current dir is '" + dir::current() + "'");
   }
 
   void test_notempfolder()
@@ -33,25 +36,17 @@ public:
 
   void test_contents()
   {
-    vector_t<string_t> expected_dir;
-    expected_dir.push_back(".");
-    expected_dir.push_back("..");
-    expected_dir.push_back(app_name);
-    expected_dir.push_back("tests.cc");
-    expected_dir.push_back("test_dir.hh");
-    expected_dir.push_back("test_file.hh");
-
-    vector_t<string_t> actual_dir = dir::contents(dir::current());
-    std::cout << "* Printing ' " << dir::current().c_str() << "' dir contents: " << std::endl;
+    vector_t<string_t> current_dir = dir::contents(dir::current());
+    console::println("* Printing ' " + dir::current() + "' dir contents: ");
     for (
-      vector_t<string_t>::const_iterator it = actual_dir.begin();
-      it != actual_dir.end();
+      vector_t<string_t>::const_iterator it = current_dir.begin();
+      it != current_dir.end();
       ++it)
     {
-      std::cout << "  * " << (*it).c_str() << std::endl;
+      console::println("  * " + *it);
     }
 
-    assert_equal(expected_dir, actual_dir);
+    assert_gequal<size_t>(current_dir.size(), 2);
   }
 
   void test_change()
@@ -63,7 +58,7 @@ public:
     assert_equal(expected_current, actual_current);
   }
 
-  test_dir(const string_t& app_name) : testcase_t("dir"), app_name(app_name)
+  test_dir() : testcase_t("dir")
   {
     add_test(test_func(&test_dir::test_notempfolder), "Checking that temp folder does not exist");
     add_test(test_func(&test_dir::test_create), "Checking dir::create");
@@ -71,6 +66,6 @@ public:
     add_test(test_func(&test_dir::test_contents), "Checking dir::contents");
     add_test(test_func(&test_dir::test_change), "Checking dir::change");
   }
-private:
-  string_t app_name;
 };
+
+#endif // SWAN_TEST_DIR_INCLUDED

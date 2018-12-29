@@ -3,7 +3,8 @@
 #ifndef SWAN_TESTING_INCLUDED
 #define SWAN_TESTING_INCLUDED
 
-#include "string.h"
+#include "strmanip.hh"
+#include "time.hh"
 #include "vector.hh"
 
 namespace swan
@@ -13,17 +14,30 @@ namespace swan
   public:
     typedef void(testcase_t::*test_func)();
 
-    testcase_t(const char* name) : name(name), assert_ok(true) {}
-
-    template<typename T>
-    void assert_equal(const T& a, const T& b) { assert_ok = (a == b); }
-
-    template<typename T>
-    void assert_notequal(const T& a, const T& b) { assert_ok = (a != b); }
+    testcase_t(const char* name) : name(name) {}
 
     virtual void init() {}
     virtual void setup() {}
     void run();
+    void skip() { skip_ = true; }
+
+    template<typename T>
+    bool assert_equal(const T& a, const T& b) { return do_assert(a == b); }
+
+    template<typename T>
+    bool assert_notequal(const T& a, const T& b) { return do_assert(a != b); }
+
+    template<typename T>
+    bool assert_gequal(const T& a, const T& b) { return do_assert(a >= b); }
+
+    template<typename T>
+    bool assert_lequal(const T& a, const T& b) { return do_assert(a <= b); }
+
+    template<typename T>
+    bool assert_greater(const T& a, const T& b) { return do_assert(a > b); }
+
+    template<typename T>
+    bool assert_lesser(const T& a, const T& b) { return do_assert(a < b); }
 
     static void print_callback(void(*func)(const char*), const char* msg = NULL);
   protected:
@@ -33,20 +47,53 @@ namespace swan
     vector_t<test_func> test_funcs;
     vector_t<string_t> test_msgs;
     bool assert_ok;
+    bool skip_;
+    size_t ok_asserts;
+    size_t fail_asserts;
+
+    bool do_assert(bool exp);
 
     static void std_print(const char* s);
   };
 
   inline void testcase_t::run()
   {
+    // init tests
     print_callback(NULL, ("# Testing " + name + "\n").c_str());
     init();
+    ok_asserts = 0;
+    fail_asserts = 0;
+
+    // run tests
+    unsigned int prev_ms = time::millisecs();
     for (size_t i = 0; i < test_funcs.size(); ++i)
     {
+      // init environment
+      setup();
       assert_ok = true;
+      skip_ = false;
+
+      // run test
+      unsigned int prev_ms = time::millisecs();
       (this->*test_funcs[i])();
-      print_callback(NULL, ("* " + test_msgs[i] + " -> " + (assert_ok ? "OK" : "FAIL") + "\n").c_str());
+      unsigned int current_ms = time::millisecs();
+
+      // print output
+      string_t msg = "* " + test_msgs[i] +
+        " -> " +
+        (skip_ ? "SKIP" : (assert_ok ? "OK" : "FAIL")) +
+        " (" + strmanip::fromdouble((current_ms - prev_ms) / 1000.0) + "s)"
+        "\n";
+      print_callback(NULL, msg.c_str());
     }
+    unsigned int current_ms = time::millisecs();
+
+    // print results
+    string_t msg = "> Finished " + strmanip::fromint(test_funcs.size()) + " tests (" +
+      strmanip::fromdouble((current_ms - prev_ms) / 1000.0) + "s)\n";
+    print_callback(NULL, msg.c_str());
+    print_callback(NULL, ("> * " + strmanip::fromint(ok_asserts) + " passed assertions\n").c_str());
+    print_callback(NULL, ("> * " + strmanip::fromint(fail_asserts) + " failed assertions\n").c_str());
     print_callback(NULL, "\n");
   }
 
@@ -67,6 +114,14 @@ namespace swan
     {
       callback(msg);
     }
+  }
+
+  inline bool testcase_t::do_assert(bool exp)
+  {
+    assert_ok = exp;
+    if (exp) ++ok_asserts;
+    else ++fail_asserts;
+    return exp;
   }
 
   inline void testcase_t::std_print(const char* s)

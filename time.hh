@@ -1,7 +1,10 @@
 // note: on windows, you need to link to winmm to use time module
+// on macos, you need to link to the Carbon framework
 
 #ifndef SWAN_TIME_INCLUDED
 #define SWAN_TIME_INCLUDED
+
+#include "strmanip.hh"
 
 #if defined(_WIN32)
 //#define WIN32_LEAN_AND_MEAN
@@ -22,18 +25,17 @@ extern "C" void __stdcall Sleep(unsigned int);
 
 namespace swan
 {
+  struct timeinfo_t
+  {
+    int year;
+    int month;
+    int day;
+    int hour;
+    int min;
+    int sec;
+  };
   namespace time
   {
-    struct timeinfo_t
-    {
-      int year;
-      int mon;
-      int day;
-      int hour;
-      int min;
-      int sec;
-    };
-
     inline unsigned int millisecs()
     {
 #if defined(_WIN32)
@@ -88,12 +90,38 @@ namespace swan
 
       timeinfo_t t;
       t.year = pti->tm_year+1900;
-      t.mon = pti->tm_mon+1;
+      t.month = pti->tm_mon+1;
       t.day = pti->tm_mday;
       t.hour = pti->tm_hour;
       t.min = pti->tm_min;
       t.sec = pti->tm_sec;
       return t;
+    }
+
+    inline string_t parsetimeinfo(const timeinfo_t& ti, bool parsedate = true, bool parsetime = true)
+    {
+      string_t str;
+      
+      if (parsedate)
+      {
+        str += strmanip::lset(strmanip::fromint(ti.year), 4, '0');
+        str += "/";
+        str += strmanip::lset(strmanip::fromint(ti.month), 2, '0');
+        str += "/";
+        str += strmanip::lset(strmanip::fromint(ti.day), 2, '0');
+      }
+
+      if (parsetime)
+      {
+        if ( str != "" ) str += " ";
+        str += strmanip::lset(strmanip::fromint(ti.hour), 2, '0');
+        str += ":";
+        str += strmanip::lset(strmanip::fromint(ti.min), 2, '0');
+        str += ":";
+        str += strmanip::lset(strmanip::fromint(ti.sec), 2, '0');
+      }
+
+      return str;
     }
   } // namespace time
 } // namespace swan

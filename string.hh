@@ -49,7 +49,7 @@ namespace swan
       size_t  buffer_size;
       size_t  len;
 
-      static const char* strrstr(const char* str, const char* find, size_t endpos = npos);
+      static const char* strrstr(const char* str, const char* find, size_t endofs = npos);
   };
 
   inline string_t::string_t(const char* s)
@@ -170,7 +170,7 @@ namespace swan
 
   inline size_t string_t::rfind(const string_t& str, size_t pos) const
   {
-    const char* p = strrstr(&buffer[pos], str.buffer, pos);
+    const char* p = strrstr(buffer, str.buffer, pos);
     if (p == NULL)
       return npos;
     else
@@ -229,15 +229,15 @@ namespace swan
     return str;
   }
 
-  const char* string_t::strrstr(const char* str, const char* find, size_t endpos)
+  const char* string_t::strrstr(const char* str, const char* find, size_t endofs)
   {
-    if (endpos == npos) endpos = strlen(str);
+    if (endofs == npos) endofs = strlen(str);
     size_t len = strlen(find);
-    for (const char* cp = str + endpos - len; cp >= str; --cp)
+    for (const char* cp = str + endofs - len; cp >= str; --cp)
     {
       if (strncmp(cp, find, len) == 0) return cp;
     }
-    return 0;
+    return NULL;
   }
 
   inline string_t operator+(const char* cstr, const string_t& str)
