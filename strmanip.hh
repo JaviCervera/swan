@@ -105,11 +105,11 @@ namespace swan
       fseek(f, 0, SEEK_END);
       long size = ftell(f);
       fseek(f, 0, SEEK_SET);
-      char* buf = new char[size+1];
+      char* buf = (char*)malloc(size+1);
       fread(buf, sizeof(char), size, f);
       buf[size] = '\0';
       string_t str(buf);
-      delete[] buf;
+      free(buf);
       return str;
     }
 
