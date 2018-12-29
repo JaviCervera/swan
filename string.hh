@@ -179,26 +179,27 @@ namespace swan
 
   inline string_t& string_t::replace(size_t pos, size_t len, const string_t& str)
   {
+    size_t len2 = str.length();
     if (len == npos) len = length() - pos;
 
     // increase buffer if needed
-    if (buffer_size <= pos + str.length())
+    if (buffer_size <= length() - len + len2)
     {
-      buffer_size = pos + str.length() + 1;
+      buffer_size = length() - len + len2 + 1;
       buffer = (char*)realloc(buffer, buffer_size);
     }
 
     // move trailing chars if needed
-    if (len != str.length())
+    if (len != len2)
     {
-      memmove(&this->buffer[pos+str.length()], &this->buffer[pos+len], this->len - pos - len);
+      memmove(&this->buffer[pos+len2], &this->buffer[pos+len], this->len - pos - len);
     }
 
     // copy string chars
-    strncpy(&buffer[pos], str.c_str(), str.length());
+    strncpy(&buffer[pos], str.c_str(), len2);
 
     // update length
-    this->len += str.length() - len;
+    this->len += len2 - len;
     buffer[this->len] = 0;
 
     return *this;

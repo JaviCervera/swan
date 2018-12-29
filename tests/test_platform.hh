@@ -10,7 +10,7 @@ class test_platform : public swan::testcase_t
 public:
   void test_platformknown()
   {
-    swan::string_t platform_name[] = {"windows", "macos", "linux"};
+    swan::string_t platform_name[] = {"unknown", "windows", "macos", "linux"};
     platform_id id = swan::platform::id();
     console::println("* Platform name: " + platform_name[id]);
     assert_notequal<size_t>(punknown, id);

@@ -1,7 +1,13 @@
+// note: on linux, you need to link to dl to use sharedlib module
+
 #ifndef SWAN_SHAREDLIB_INCLUDED
 #define SWAN_SHAREDLIB_INCLUDED
 
 #include "string.hh"
+
+#ifndef __stdcall
+#define __stdcall
+#endif
 
 #ifdef _WIN32
 extern "C" void* __stdcall LoadLibraryA(const char*);
