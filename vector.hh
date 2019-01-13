@@ -1,11 +1,10 @@
-// TODO: use realloc
-
 #ifndef SWAN_VECTOR_INCLUDED
 #define SWAN_VECTOR_INCLUDED
 
 #ifdef SWAN_NO_STL
 
 #include <stdlib.h>
+#include <string.h>
 
 namespace swan
 {
@@ -18,7 +17,7 @@ namespace swan
     vector_t();
     vector_t(size_t n, const T& val = T());
     vector_t(const vector_t<T>& other);
-    ~vector_t() { free(m_buffer); }
+    ~vector_t() { clear(); free(m_buffer); }
 
     vector_t<T>&  operator=(const vector_t<T>& other);
     T&            operator[](size_t index)                    { return m_buffer[index]; }
@@ -88,26 +87,21 @@ namespace swan
   template <typename T>
   void vector_t<T>::push_back(const T& elem)
   {
-    if ( m_capacity == m_size )
+    if (m_size == m_capacity)
     {
       m_capacity += SWAN_CAPACITY_INC;
-      T* oldBuffer = m_buffer;
-      m_buffer = (T*)calloc(m_capacity, sizeof(T));
-      for (size_t i = 0; i < m_size; ++i) m_buffer[i] = oldBuffer[i];
-      free(oldBuffer);
+      m_buffer = (T*)realloc(m_buffer, m_capacity * sizeof(T));
     }
     m_buffer[m_size++] = elem;
   }
 
-  // todo: invoke object destructor
   template <typename T>
   typename vector_t<T>::iterator vector_t<T>::erase(vector_t<T>::iterator it)
   {
     size_t index = it - m_buffer;
+    m_buffer[index].~T(); // invoke destructor
+    memmove(&m_buffer[index], &m_buffer[index+1], (m_size - index - 1) * sizeof(T));
     for (size_t i = index+1; i < m_size; ++i)
-    {
-      m_buffer[i-1] = m_buffer[i];
-    }
     --m_size;
     return &m_buffer[index];
   }
@@ -115,8 +109,11 @@ namespace swan
   template <typename T>
   void vector_t<T>::clear()
   {
-    free(m_buffer);
-    m_buffer = (T*)calloc(SWAN_CAPACITY_INC, sizeof(T));
+    for (size_t i = 0; i < m_size; ++i)
+    {
+      m_buffer[i].~T(); // invoke destructor
+    }
+    m_buffer = (T*)realloc(m_buffer, SWAN_CAPACITY_INC * sizeof(T));
     m_size = 0;
     m_capacity = SWAN_CAPACITY_INC;
   }
@@ -133,10 +130,7 @@ namespace swan
       if (n > m_capacity)
       {
         m_capacity += (n - m_capacity < SWAN_CAPACITY_INC) ? SWAN_CAPACITY_INC : (n - m_capacity);
-        T* oldBuffer = m_buffer;
-        m_buffer = (T*)calloc(m_capacity, sizeof(T));
-        for (size_t i = 0; i < m_size; ++i) m_buffer[i] = oldBuffer[i];
-        free(oldBuffer);
+        m_buffer = (T*)realloc(m_buffer, m_capacity * sizeof(T));
       }
       for (size_t i = m_size; i < n; ++i) m_buffer[i] = val;
       m_size = n;

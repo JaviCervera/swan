@@ -15,6 +15,7 @@ namespace swan
     inline void println(const string_t& msg)
     {
       printf("%s\n", msg.c_str());
+      fflush(stdout);
     }
 
     inline string_t input(const string_t& prompt)

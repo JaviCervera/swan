@@ -4,6 +4,7 @@
 #include "test_sharedlib.hh"
 #include "test_strmanip.hh"
 #include "test_time.hh"
+#include "test_vector.hh"
 
 using namespace swan;
 
@@ -15,6 +16,7 @@ int main(int argc, const char* argv[])
   test_sharedlib sl;
   test_strmanip st;
   test_time t;
+  test_vector v;
 
   d.run();
   f.run();
@@ -22,4 +24,5 @@ int main(int argc, const char* argv[])
   sl.run();
   st.run();
   t.run();
+  v.run();
 }
