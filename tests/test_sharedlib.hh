@@ -8,7 +8,7 @@
 #include "../sharedlib.hh"
 #include "../testing.hh"
 
-class test_sharedlib : public swan::testcase_t
+class test_sharedlib_t : public swan::testcase_t
 {
 public:
   typedef int(__stdcall * msg_box_ptr)(const void*, const char*, const char*, unsigned int);
@@ -35,10 +35,10 @@ public:
     }
   }
 
-  test_sharedlib() : testcase_t("sharedlib"), lib("user32"), msg_box(NULL)
+  test_sharedlib_t() : testcase_t("sharedlib"), lib("user32"), msg_box(NULL)
   {
-    add_test(test_func(&test_sharedlib::test_openlib), "Checking that user32 lib is correctly opened");
-    add_test(test_func(&test_sharedlib::test_getfunc), "Checking that lib contains MessageBoxA function");
+    add_test(test_func(&test_sharedlib_t::test_openlib), "Checking that user32 lib is correctly opened");
+    add_test(test_func(&test_sharedlib_t::test_getfunc), "Checking that lib contains MessageBoxA function");
   }
 private:
   swan::sharedlib_t lib;

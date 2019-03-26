@@ -4,7 +4,7 @@
 #include "../strmanip.hh"
 #include "../testing.hh"
 
-class test_strmanip : public swan::testcase_t
+class test_strmanip_t : public swan::testcase_t
 {
 public:
   void test_string()
@@ -42,14 +42,14 @@ public:
     assert_equal<std::string>("this====", str);
   }
 
-  test_strmanip() : testcase_t("strmanip"), str("this is a test string.")
+  test_strmanip_t() : testcase_t("strmanip"), str("this is a test string.")
   {
-    add_test(test_func(&test_strmanip::test_string), "Checking that initial string is \"this is a test string.\"");
-    add_test(test_func(&test_strmanip::test_string2), "Checking that modified string is \"this is an example string.\"");
-    add_test(test_func(&test_strmanip::test_string3), "Checking that modified string is \"this is an example phrase.\"");
-    add_test(test_func(&test_strmanip::test_string4), "Checking that modified string is \"this is just a phrase.\"");
-    add_test(test_func(&test_strmanip::test_string5), "Checking that modified string is \"this\"");
-    add_test(test_func(&test_strmanip::test_string6), "Checking that modified string is \"this====\"");
+    add_test(test_func(&test_strmanip_t::test_string), "Checking that initial string is \"this is a test string.\"");
+    add_test(test_func(&test_strmanip_t::test_string2), "Checking that modified string is \"this is an example string.\"");
+    add_test(test_func(&test_strmanip_t::test_string3), "Checking that modified string is \"this is an example phrase.\"");
+    add_test(test_func(&test_strmanip_t::test_string4), "Checking that modified string is \"this is just a phrase.\"");
+    add_test(test_func(&test_strmanip_t::test_string5), "Checking that modified string is \"this\"");
+    add_test(test_func(&test_strmanip_t::test_string6), "Checking that modified string is \"this====\"");
   }
 private:
   std::string str;

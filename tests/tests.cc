@@ -10,13 +10,13 @@ using namespace swan;
 
 int main(int argc, const char* argv[])
 {
-  test_dir d;
-  test_file f;
-  test_platform p;
-  test_sharedlib sl;
-  test_strmanip st;
-  test_time t;
-  test_vector v;
+  test_dir_t d;
+  test_file_t f;
+  test_platform_t p;
+  test_sharedlib_t sl;
+  test_strmanip_t st;
+  test_time_t t;
+  test_vector_t v;
 
   d.run();
   f.run();

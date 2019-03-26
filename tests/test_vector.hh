@@ -35,7 +35,7 @@ private:
 
 using namespace swan;
 
-class test_vector : public swan::testcase_t
+class test_vector_t : public swan::testcase_t
 {
 public:
   void test_constructor()
@@ -63,11 +63,11 @@ public:
     assert_equal<size_t>(7, foo_t::destructor_calls());
   }
 
-  test_vector() : testcase_t("vector")
+  test_vector_t() : testcase_t("vector")
   {
-    add_test(test_func(&test_vector::test_constructor), "Checking that empty constructor does not call any instances");
-    add_test(test_func(&test_vector::test_constructor2), "Checking that constructor calls contained objects constructors");
-    add_test(test_func(&test_vector::test_constructor3), "Checking that copy constructor calls contained objects constructors");
+    add_test(test_func(&test_vector_t::test_constructor), "Checking that empty constructor does not call any instances");
+    add_test(test_func(&test_vector_t::test_constructor2), "Checking that constructor calls contained objects constructors");
+    add_test(test_func(&test_vector_t::test_constructor3), "Checking that copy constructor calls contained objects constructors");
   }
 };
 

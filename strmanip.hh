@@ -57,7 +57,7 @@ namespace swan
       return tonumber<double>(str, "%lf");
     }
 
-    inline std::string replace_all(const std::string& str, const std::string& find, const std::string& rep)
+    inline std::string replaceall(const std::string& str, const std::string& find, const std::string& rep)
     {
       std::string strcopy = str;
       size_t find_pos = strcopy.find(find);

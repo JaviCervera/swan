@@ -9,7 +9,7 @@
 
 using namespace swan;
 
-class test_dir : public testcase_t
+class test_dir_t : public testcase_t
 {
 public:
   void init()
@@ -58,13 +58,13 @@ public:
     assert_equal(expected_current, actual_current);
   }
 
-  test_dir() : testcase_t("dir")
+  test_dir_t() : testcase_t("dir")
   {
-    add_test(test_func(&test_dir::test_notempfolder), "Checking that temp folder does not exist");
-    add_test(test_func(&test_dir::test_create), "Checking dir::create");
-    add_test(test_func(&test_dir::test_remove), "Checking dir::remove");
-    add_test(test_func(&test_dir::test_contents), "Checking dir::contents");
-    add_test(test_func(&test_dir::test_change), "Checking dir::change");
+    add_test(test_func(&test_dir_t::test_notempfolder), "Checking that temp folder does not exist");
+    add_test(test_func(&test_dir_t::test_create), "Checking dir::create");
+    add_test(test_func(&test_dir_t::test_remove), "Checking dir::remove");
+    add_test(test_func(&test_dir_t::test_contents), "Checking dir::contents");
+    add_test(test_func(&test_dir_t::test_change), "Checking dir::change");
   }
 };
 

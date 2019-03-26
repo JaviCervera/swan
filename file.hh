@@ -200,14 +200,14 @@ namespace swan
     return str;
   }
 
-  enum filetype
+  enum filetype_t
   {
     funknown,
     ffile,
     fdir
   };
 
-  inline filetype filetype(const char* filename)
+  inline filetype_t filetype(const char* filename)
   {
     struct stat statbuf;
     if ( stat(filename, &statbuf) == -1 )

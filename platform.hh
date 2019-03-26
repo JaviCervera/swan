@@ -12,7 +12,7 @@
 
 namespace swan
 {
-  enum platform_id
+  enum platform_id_t
   {
     punknown,
     pwindows,
@@ -22,7 +22,7 @@ namespace swan
 
   namespace platform
   {
-    inline platform_id id()
+    inline platform_id_t id()
     {
 #if defined(_WIN32)
       return pwindows;

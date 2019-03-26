@@ -5,13 +5,13 @@
 #include "../platform.hh"
 #include "../testing.hh"
 
-class test_platform : public swan::testcase_t
+class test_platform_t : public swan::testcase_t
 {
 public:
   void test_platformknown()
   {
     std::string platform_name[] = {"unknown", "windows", "macos", "linux"};
-    platform_id id = swan::platform::id();
+    platform_id_t id = swan::platform::id();
     console::println("* Platform name: " + platform_name[id]);
     assert_notequal<size_t>(punknown, id);
   }
@@ -23,10 +23,10 @@ public:
     assert_notequal<std::string>("", path);
   }
 
-  test_platform() : testcase_t("platform")
+  test_platform_t() : testcase_t("platform")
   {
-    add_test(test_func(&test_platform::test_platformknown), "Checking that platform is known");
-    add_test(test_func(&test_platform::test_path), "Checking that PATH env var exist");
+    add_test(test_func(&test_platform_t::test_platformknown), "Checking that platform is known");
+    add_test(test_func(&test_platform_t::test_path), "Checking that PATH env var exist");
   }
 };
 

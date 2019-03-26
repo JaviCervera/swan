@@ -41,8 +41,8 @@ namespace swan
     vec2_t& operator-=(float scalar) { x -= scalar; y -= scalar; return *this; }
     vec2_t& operator*=(float scalar) { x *= scalar; y *= scalar; return *this; }
     vec2_t& operator/=(float scalar) { x /= scalar; y /= scalar; return *this; }
-    float sq_length() const { return dot(*this); }
-    float length() const { return sqrt(sq_length()); }
+    float sqlength() const { return dot(*this); }
+    float length() const { return sqrt(sqlength()); }
     vec2_t norm() const;
     float dot(const vec2_t& other) const { return x * other.x + y * other.y; }
     vec2_t mix(const vec2_t& other, float t) const { return *this + (other - *this) * t; }
@@ -81,8 +81,8 @@ namespace swan
     vec3_t& operator-=(float scalar) { x -= scalar; y -= scalar; z -= scalar; return *this; }
     vec3_t& operator*=(float scalar) { x *= scalar; y *= scalar; z *= scalar; return *this; }
     vec3_t& operator/=(float scalar) { x /= scalar; y /= scalar; z /= scalar; return *this; }
-    float sq_length() const { return dot(*this); }
-    float length() const { return sqrt(sq_length()); }
+    float sqlength() const { return dot(*this); }
+    float length() const { return sqrt(sqlength()); }
     vec3_t norm() const;
     float dot(const vec3_t& other) const { return x * other.x + y * other.y + z * other.z; }
     vec3_t cross(const vec3_t& other) const { return vec3_t(y*other.z - z*other.y, z*other.x - x*other.z, x*other.y - y*other.x); }

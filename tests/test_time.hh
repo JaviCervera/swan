@@ -5,7 +5,7 @@
 #include "../time.hh"
 #include "../testing.hh"
 
-class test_time : public swan::testcase_t
+class test_time_t : public swan::testcase_t
 {
 public:
   void test_timeinfo()
@@ -34,12 +34,12 @@ public:
     assert_equal(time_after.sec, (time_before.sec + 1) % 60);
   }
 
-  test_time() : testcase_t("time")
+  test_time_t() : testcase_t("time")
   {
-    add_test(test_func(&test_time::test_timeinfo), "Checking that current month is not zero");
-    add_test(test_func(&test_time::test_parse), "Checking that parsetimeinfo does not return an empty string");
-    add_test(test_func(&test_time::test_millisecs), "Checking that millisecs does not return zero");
-    add_test(test_func(&test_time::test_delay), "Checking that delay waits for the correct time");
+    add_test(test_func(&test_time_t::test_timeinfo), "Checking that current month is not zero");
+    add_test(test_func(&test_time_t::test_parse), "Checking that parsetimeinfo does not return an empty string");
+    add_test(test_func(&test_time_t::test_millisecs), "Checking that millisecs does not return zero");
+    add_test(test_func(&test_time_t::test_delay), "Checking that delay waits for the correct time");
   }
 };
 
