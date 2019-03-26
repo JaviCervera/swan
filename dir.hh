@@ -31,9 +31,9 @@ namespace swan
 {
   namespace dir
   {
-    inline vector_t<string_t> contents(const string_t& path)
+    inline std::vector<std::string> contents(const std::string& path)
     {
-      vector_t<string_t> arr;
+      std::vector<std::string> arr;
 
       // open directory
       DIR* d = (DIR*)opendir(path.c_str());
@@ -52,19 +52,19 @@ namespace swan
       return arr;
     }
 
-    inline string_t current()
+    inline std::string current()
     {
       char buf[FILENAME_MAX];
       _getcwd(buf, FILENAME_MAX);
-      return string_t(buf);
+      return std::string(buf);
     }
 
-    inline bool change(const string_t& path)
+    inline bool change(const std::string& path)
     {
       return _chdir(path.c_str()) == 0;
     }
 
-    inline void create(const string_t& path)
+    inline void create(const std::string& path)
     {
 #ifdef _WIN32
       _mkdir(path.c_str());
@@ -73,16 +73,16 @@ namespace swan
 #endif
     }
 
-    inline void remove(const string_t& path)
+    inline void remove(const std::string& path)
     {
       _rmdir(path.c_str());
     }
 
-    inline string_t real_path(const string_t& path)
+    inline std::string real_path(const std::string& path)
     {
       char out_path[FILENAME_MAX];
       realpath(path.c_str(), out_path);
-      return string_t(out_path);
+      return std::string(out_path);
     }
   } // namespace dir
 } // namespace swan

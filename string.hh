@@ -9,29 +9,29 @@
 #include <stdlib.h>
 #include <string.h>
 
-namespace swan
+namespace std
 {
-  class string_t
+  class string
   {
   public:
     static const size_t npos = -1;
 
-    string_t(const char* s = "");
-    string_t(char c);
-    string_t(size_t n, char c);
-    string_t(const string_t& str);
-    ~string_t();
+    string(const char* s = "");
+    string(char c);
+    string(size_t n, char c);
+    string(const string& str);
+    ~string();
 
-    bool operator==(const string_t& other) const;
-    bool operator!=(const string_t& other) const;
-    bool operator<(const string_t& other) const;
-    bool operator>(const string_t& other) const;
-    string_t operator+(const string_t& other) const;
-    string_t operator+(char c) const;
-    string_t& operator=(const string_t& other);
-    string_t& operator=(char c);
-    string_t& operator+=(const string_t& other);
-    string_t& operator+=(char c);
+    bool operator==(const string& other) const;
+    bool operator!=(const string& other) const;
+    bool operator<(const string& other) const;
+    bool operator>(const string& other) const;
+    string operator+(const string& other) const;
+    string operator+(char c) const;
+    string& operator=(const string& other);
+    string& operator=(char c);
+    string& operator+=(const string& other);
+    string& operator+=(char c);
     char& operator[](size_t index);
     const char& operator[](size_t index) const;
 
@@ -39,11 +39,11 @@ namespace swan
     size_t size() const { return len; }
     const char* c_str() const { return buffer; }
 
-    size_t find(const string_t& str, size_t pos = 0) const;
-    size_t rfind(const string_t& str, size_t pos = npos) const;
-    string_t& replace(size_t pos, size_t len, const string_t& str);
+    size_t find(const string& str, size_t pos = 0) const;
+    size_t rfind(const string& str, size_t pos = npos) const;
+    string& replace(size_t pos, size_t len, const string& str);
     void resize(size_t n, char c = 0);
-    string_t substr(size_t pos, size_t len = npos) const;
+    string substr(size_t pos, size_t len = npos) const;
   private:
       char*   buffer;
       size_t  buffer_size;
@@ -52,74 +52,74 @@ namespace swan
       static const char* strrstr(const char* str, const char* find, size_t endofs = npos);
   };
 
-  inline string_t::string_t(const char* s)
+  inline string::string(const char* s)
   : buffer(0), buffer_size(0), len(0)
   {
     resize(strlen(s));
     strcpy(buffer, s);
   }
 
-  inline string_t::string_t(char c)
+  inline string::string(char c)
   : buffer(0), buffer_size(0), len(0)
   {
     resize(1, c);
   }
 
-  inline string_t::string_t(size_t n, char c)
+  inline string::string(size_t n, char c)
   : buffer(0), buffer_size(0), len(0)
   {
     resize(n, c);
   }
 
-  inline string_t::string_t(const string_t& str)
+  inline string::string(const string& str)
   : buffer(0), buffer_size(0), len(0)
   {
     resize(str.length());
     strcpy(buffer, str.buffer);
   }
 
-  inline string_t::~string_t()
+  inline string::~string()
   {
     free(buffer);
   }
 
-  inline bool string_t::operator==(const string_t& other) const
+  inline bool string::operator==(const string& other) const
   {
     return strcmp(buffer, other.buffer) == 0;
   }
 
-  inline bool string_t::operator!=(const string_t& other) const
+  inline bool string::operator!=(const string& other) const
   {
     return strcmp(buffer, other.buffer) != 0;
   }
 
-  inline bool string_t::operator<(const string_t& other) const
+  inline bool string::operator<(const string& other) const
   {
     return strcmp(buffer, other.buffer) < 0;
   }
 
-  inline bool string_t::operator>(const string_t& other) const
+  inline bool string::operator>(const string& other) const
   {
     return strcmp(buffer, other.buffer) > 0;
   }
 
-  inline string_t string_t::operator+(const string_t& other) const
+  inline string string::operator+(const string& other) const
   {
     char* buf = (char*)malloc(len + other.len + 1);
     strcpy(buf, buffer);
     strcat(buf, other.buffer);
-    string_t str(buf);
+    string str(buf);
     free(buf);
     return str;
   }
 
-  inline string_t string_t::operator+(char c) const
+  inline string string::operator+(char c) const
   {
     char s[2] = {c, '\0'};
     return *this + s;
   }
 
-  inline string_t& string_t::operator=(const string_t& other)
+  inline string& string::operator=(const string& other)
   {
     if (buffer_size < other.len + 1)
     {
@@ -132,34 +132,34 @@ namespace swan
     return *this;
   }
 
-  inline string_t& string_t::operator=(char c)
+  inline string& string::operator=(char c)
   {
     char s[2] = {c, '\0'};
     return *this = s;
   }
 
-  inline string_t& string_t::operator+=(const string_t& other)
+  inline string& string::operator+=(const string& other)
   {
     return *this = *this + other;
   }
 
-  inline string_t& string_t::operator+=(char c)
+  inline string& string::operator+=(char c)
   {
     char s[2] = {c, '\0'};
     return *this += s;
   }
 
-  inline char& string_t::operator[](size_t index)
+  inline char& string::operator[](size_t index)
   {
     return buffer[index];
   }
 
-  inline const char& string_t::operator[](size_t index) const
+  inline const char& string::operator[](size_t index) const
   {
     return buffer[index];
   }
 
-  inline size_t string_t::find(const string_t& str, size_t pos) const
+  inline size_t string::find(const string& str, size_t pos) const
   {
     const char* p = strstr(&buffer[pos], str.buffer);
     if (p == NULL)
@@ -168,7 +168,7 @@ namespace swan
       return (p - buffer);
   }
 
-  inline size_t string_t::rfind(const string_t& str, size_t pos) const
+  inline size_t string::rfind(const string& str, size_t pos) const
   {
     const char* p = strrstr(buffer, str.buffer, pos);
     if (p == NULL)
@@ -177,7 +177,7 @@ namespace swan
       return (p - buffer);
   }
 
-  inline string_t& string_t::replace(size_t pos, size_t len, const string_t& str)
+  inline string& string::replace(size_t pos, size_t len, const string& str)
   {
     size_t len2 = str.length();
     if (len == npos) len = length() - pos;
@@ -205,7 +205,7 @@ namespace swan
     return *this;
   }
 
-  inline void string_t::resize(size_t n, char c)
+  inline void string::resize(size_t n, char c)
   {
     const size_t prev_len = len;
     if (buffer_size <= n)
@@ -219,18 +219,18 @@ namespace swan
   }
   
   // todo: optimize this
-  inline string_t string_t::substr(size_t pos, size_t len) const
+  inline string string::substr(size_t pos, size_t len) const
   {
     if (len == npos) len = size() - pos;
     char* buf = (char*)malloc(len+1);
     strncpy(buf, &buffer[pos], len);
     buf[len] = '\0';
-    string_t str(buf);
+    string str(buf);
     free(buf);
     return str;
   }
 
-  inline const char* string_t::strrstr(const char* str, const char* find, size_t endofs)
+  inline const char* string::strrstr(const char* str, const char* find, size_t endofs)
   {
     if (endofs == npos) endofs = strlen(str);
     size_t len = strlen(find);
@@ -241,20 +241,15 @@ namespace swan
     return NULL;
   }
 
-  inline string_t operator+(const char* cstr, const string_t& str)
+  inline string operator+(const char* cstr, const string& str)
   {
-    return string_t(cstr) + str;
+    return string(cstr) + str;
   }
-} // namespace swan
+} // namespace std
 
 #else // SWAN_NO_STL
 
 #include <string>
-
-namespace swan
-{
-  typedef std::string string_t;
-}
 
 #endif // SWAN_NO_STL
 

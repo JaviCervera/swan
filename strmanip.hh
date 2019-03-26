@@ -17,51 +17,51 @@ namespace swan
   namespace strmanip
   {
     template <typename T>
-    string_t fromnumber(const T& val, const char* format)
+    std::string fromnumber(const T& val, const char* format)
     {
       char buf[32];
       sprintf(buf, format, val);
-      return string_t(buf);
+      return std::string(buf);
     }
 
-    inline string_t fromint(int val)
+    inline std::string fromint(int val)
     {
       return fromnumber(val, "%i");
     }
 
-    inline string_t fromdouble(double val)
+    inline std::string fromdouble(double val)
     {
       return fromnumber(val, "%f");
     }
 
     template <typename T>
-    T tonumber(const string_t& str, const char* format)
+    T tonumber(const std::string& str, const char* format)
     {
       T ret = 0;
       sscanf(str.c_str(), format, &ret);
       return ret;
     }
 
-    inline int toint(const string_t& str)
+    inline int toint(const std::string& str)
     {
       return tonumber<int>(str, "%i");
     }
 
-    inline float tofloat(const string_t& str)
+    inline float tofloat(const std::string& str)
     {
       return tonumber<float>(str, "%f");
     }
 
-    inline double todouble(const string_t& str)
+    inline double todouble(const std::string& str)
     {
       return tonumber<double>(str, "%lf");
     }
 
-    inline string_t replace_all(const string_t& str, const string_t& find, const string_t& rep)
+    inline std::string replace_all(const std::string& str, const std::string& find, const std::string& rep)
     {
-      string_t strcopy = str;
+      std::string strcopy = str;
       size_t find_pos = strcopy.find(find);
-      while (find_pos != string_t::npos)
+      while (find_pos != std::string::npos)
       {
         strcopy.replace(find_pos, find.length(), rep);
         find_pos = strcopy.find(find, find_pos + rep.length());
@@ -69,36 +69,36 @@ namespace swan
       return strcopy;
     }
 
-    inline string_t stripext(const string_t& filename)
+    inline std::string stripext(const std::string& filename)
     {
       return filename.substr(0, filename.find('.'));
     }
 
-    inline string_t stripdir(const string_t& filename)
+    inline std::string stripdir(const std::string& filename)
     {
       size_t find_pos = filename.rfind('\\');
-      if (find_pos == string_t::npos) find_pos = filename.rfind('/');
-      return (find_pos != string_t::npos)
+      if (find_pos == std::string::npos) find_pos = filename.rfind('/');
+      return (find_pos != std::string::npos)
         ? filename.substr(find_pos + 1, filename.length() - find_pos - 1)
         : filename;
     }
 
-    inline string_t extractext(const string_t& filename)
+    inline std::string extractext(const std::string& filename)
     {
       size_t find_pos = filename.rfind('.');
-      return (find_pos != string_t::npos)
+      return (find_pos != std::string::npos)
         ? filename.substr(find_pos + 1, filename.length() - find_pos - 1)
         : filename;
     }
 
-    inline string_t extractdir(const string_t& filename)
+    inline std::string extractdir(const std::string& filename)
     {
       size_t find_pos = filename.rfind('\\');
-      if (find_pos == string_t::npos) find_pos = filename.rfind('/');
+      if (find_pos == std::string::npos) find_pos = filename.rfind('/');
       return filename.substr(0, find_pos);
     }
 
-    inline string_t read(const string_t& filename)
+    inline std::string read(const std::string& filename)
     {
       FILE* f = fopen(filename.c_str(), "rb");
       if (!f) return "";
@@ -108,12 +108,12 @@ namespace swan
       char* buf = (char*)malloc(size+1);
       fread(buf, sizeof(char), size, f);
       buf[size] = '\0';
-      string_t str(buf);
+      std::string str(buf);
       free(buf);
       return str;
     }
 
-    inline void write(const string_t& str, const string_t& filename, bool append = true)
+    inline void write(const std::string& str, const std::string& filename, bool append = true)
     {
       FILE* f = fopen(filename.c_str(), append ? "ab" : "wb");
       if (!f) return;
@@ -121,11 +121,11 @@ namespace swan
       fclose(f);
     }
 
-    inline vector_t<string_t> split(const string_t& str, char delim)
+    inline std::vector<std::string> split(const std::string& str, char delim)
     {
-      vector_t<string_t> arr;
+      std::vector<std::string> arr;
       if (str.length() == 0 || delim == 0) return arr;
-      string_t out;
+      std::string out;
       for (size_t i = 0; i < str.length(); ++i)
       {
         const char c = str[i];
@@ -144,23 +144,23 @@ namespace swan
     }
 
     // todo: optimize this
-    inline string_t upper(const string_t& str)
+    inline std::string upper(const std::string& str)
     {
-      string_t out;
+      std::string out;
       for (size_t i = 0; i < str.length(); ++i) out += toupper(str[i]);
       return out;
     }
 
     // todo optimize this
-    inline string_t lower(const string_t& str)
+    inline std::string lower(const std::string& str)
     {
-      string_t out;
+      std::string out;
       for (size_t i = 0; i < str.length(); ++i)
         out += tolower(str[i]);
       return out;
     }
 
-    inline string_t ltrim(const string_t& str)
+    inline std::string ltrim(const std::string& str)
     {
       // count spaces at the beginning
       size_t i = 0;
@@ -170,45 +170,45 @@ namespace swan
       return str.substr(i);
     }
 
-    inline string_t rtrim(const string_t& str)
+    inline std::string rtrim(const std::string& str)
     {
       // look for first non space on the right
       int i = str.length() - 1;
-      size_t pos = string_t::npos;
-      while (i > 0 && pos == string_t::npos)
+      size_t pos = std::string::npos;
+      while (i > 0 && pos == std::string::npos)
       {
         if ( !isspace(str[i]) ) pos = i + 1;
         --i;
       }
 
-      if (pos == string_t::npos) pos = str.length();
+      if (pos == std::string::npos) pos = str.length();
 
       // return trimmed string
       return str.substr(0, pos);
     }
 
-    inline string_t trim(const string_t& str)
+    inline std::string trim(const std::string& str)
     {
       return rtrim(ltrim(str));
     }
 
-    inline string_t lset(const string_t& str, size_t length, char c)
+    inline std::string lset(const std::string& str, size_t length, char c)
     {
-      string_t out = str;
+      std::string out = str;
       if (out.length() > length)
       {
         out.resize(length);
       }
       else if (out.length() < length)
       {
-        out = string_t(length - out.length(), c) + out;
+        out = std::string(length - out.length(), c) + out;
       }
       return out;
     }
 
-    inline string_t rset(const string_t& str, size_t length, char c)
+    inline std::string rset(const std::string& str, size_t length, char c)
     {
-      string_t out = str;
+      std::string out = str;
       out.resize(length, c);
       return out;
     }

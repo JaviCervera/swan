@@ -9,37 +9,37 @@ class test_strmanip : public swan::testcase_t
 public:
   void test_string()
   {
-    assert_equal<string_t>("this is a test string.", str);
+    assert_equal<std::string>("this is a test string.", str);
   }
 
   void test_string2()
   {
     str.replace(9, 5, "n example");
-    assert_equal<string_t>("this is an example string.", str);
+    assert_equal<std::string>("this is an example string.", str);
   }
 
   void test_string3()
   {
     str.replace(19, 6, "phrase");
-    assert_equal<string_t>("this is an example phrase.", str);
+    assert_equal<std::string>("this is an example phrase.", str);
   }
 
   void test_string4()
   {
     str.replace(8, 10, "just a");
-    assert_equal<string_t>("this is just a phrase.", str);
+    assert_equal<std::string>("this is just a phrase.", str);
   }
 
   void test_string5()
   {
     str.resize(4);
-    assert_equal<string_t>("this", str);
+    assert_equal<std::string>("this", str);
   }
 
   void test_string6()
   {
     str.resize(8, '=');
-    assert_equal<string_t>("this====", str);
+    assert_equal<std::string>("this====", str);
   }
 
   test_strmanip() : testcase_t("strmanip"), str("this is a test string.")
@@ -52,7 +52,7 @@ public:
     add_test(test_func(&test_strmanip::test_string6), "Checking that modified string is \"this====\"");
   }
 private:
-  string_t str;
+  std::string str;
 };
 
 #endif // SWAN_TEST_STRMANIP_INCLUDED

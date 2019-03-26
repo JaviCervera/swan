@@ -43,9 +43,9 @@ namespace swan
   protected:
     void add_test(test_func f, const char* msg);
   private:
-    string_t name;
-    vector_t<test_func> test_funcs;
-    vector_t<string_t> test_msgs;
+    std::string name;
+    std::vector<test_func> test_funcs;
+    std::vector<std::string> test_msgs;
     bool assert_ok;
     bool skip_;
     size_t ok_asserts;
@@ -79,7 +79,7 @@ namespace swan
       unsigned int current_ms = time::millisecs();
 
       // print output
-      string_t msg = "* " + test_msgs[i] +
+      std::string msg = "* " + test_msgs[i] +
         " -> " +
         (skip_ ? "SKIP" : (assert_ok ? "OK" : "FAIL")) +
         " (" + strmanip::fromdouble((current_ms - prev_ms) / 1000.0) + "s)"
@@ -89,7 +89,7 @@ namespace swan
     unsigned int current_ms = time::millisecs();
 
     // print results
-    string_t msg = "> Finished " + strmanip::fromint(test_funcs.size()) + " tests (" +
+    std::string msg = "> Finished " + strmanip::fromint(test_funcs.size()) + " tests (" +
       strmanip::fromdouble((current_ms - prev_ms) / 1000.0) + "s)\n";
     print_callback(NULL, msg.c_str());
     print_callback(NULL, ("> * " + strmanip::fromint(ok_asserts) + " passed assertions\n").c_str());

@@ -40,7 +40,7 @@ class test_vector : public swan::testcase_t
 public:
   void test_constructor()
   {
-    vector_t<foo_t> vec;
+    std::vector<foo_t> vec;
     assert_equal<size_t>(0, foo_t::constructor_calls());
     assert_equal<size_t>(0, foo_t::copy_calls());
     assert_equal<size_t>(0, foo_t::destructor_calls());
@@ -48,7 +48,7 @@ public:
 
   void test_constructor2()
   {
-    vector_t<foo_t> vec(5);
+    std::vector<foo_t> vec(5);
     assert_equal<size_t>(1, foo_t::constructor_calls());
     assert_equal<size_t>(5, foo_t::copy_calls());
     assert_equal<size_t>(1, foo_t::destructor_calls());
@@ -56,8 +56,8 @@ public:
 
   void test_constructor3()
   {
-    vector_t<foo_t> vec(5);
-    vector_t<foo_t> vec2(vec);
+    std::vector<foo_t> vec(5);
+    std::vector<foo_t> vec2(vec);
     assert_equal<size_t>(2, foo_t::constructor_calls());
     assert_equal<size_t>(15, foo_t::copy_calls());
     assert_equal<size_t>(7, foo_t::destructor_calls());

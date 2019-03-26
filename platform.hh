@@ -35,9 +35,9 @@ namespace swan
 #endif
     }
 
-    inline string_t getenv(const char* var)
+    inline std::string getenv(const char* var)
     {
-      string_t env;
+      std::string env;
 #ifdef _MSC_VER
       char* buffer = NULL;
       size_t size;
@@ -59,9 +59,9 @@ namespace swan
       return system(command);
     }
 
-    inline string_t run(const char* program)
+    inline std::string run(const char* program)
     {
-      string_t output;
+      std::string output;
 
       // open pipe
       FILE* pipe = popen(program, "rt");

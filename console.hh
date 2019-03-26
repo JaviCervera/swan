@@ -7,18 +7,18 @@ namespace swan
 {
   namespace console
   {
-    inline void print(const string_t& msg)
+    inline void print(const std::string& msg)
     {
       printf("%s", msg.c_str());
     }
 
-    inline void println(const string_t& msg)
+    inline void println(const std::string& msg)
     {
       printf("%s\n", msg.c_str());
       fflush(stdout);
     }
 
-    inline string_t input(const string_t& prompt)
+    inline std::string input(const std::string& prompt)
     {
       char buffer[1024];
       printf("%s", prompt.c_str());

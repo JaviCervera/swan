@@ -98,9 +98,9 @@ namespace swan
       return t;
     }
 
-    inline string_t parsetimeinfo(const timeinfo_t& ti, bool parsedate = true, bool parsetime = true)
+    inline std::string parsetimeinfo(const timeinfo_t& ti, bool parsedate = true, bool parsetime = true)
     {
-      string_t str;
+      std::string str;
       
       if (parsedate)
       {

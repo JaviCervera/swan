@@ -16,9 +16,9 @@ public:
 
   void test_parse()
   {
-    swan::string_t date = swan::time::parsetimeinfo(swan::time::timeinfo());
+    std::string date = swan::time::parsetimeinfo(swan::time::timeinfo());
     console::println("* Current date: " + date);
-    assert_notequal<swan::string_t>("", date);
+    assert_notequal<std::string>("", date);
   }
 
   void test_millisecs()

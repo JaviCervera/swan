@@ -36,10 +36,10 @@ public:
 
   void test_contents()
   {
-    vector_t<string_t> current_dir = dir::contents(dir::current());
+    std::vector<std::string> current_dir = dir::contents(dir::current());
     console::println("* Printing ' " + dir::current() + "' dir contents: ");
     for (
-      vector_t<string_t>::const_iterator it = current_dir.begin();
+      std::vector<std::string>::const_iterator it = current_dir.begin();
       it != current_dir.end();
       ++it)
     {
@@ -51,9 +51,9 @@ public:
 
   void test_change()
   {
-    string_t expected_current = strmanip::extractdir(dir::current());
+    std::string expected_current = strmanip::extractdir(dir::current());
     dir::change("..");
-    string_t actual_current = dir::current();
+    std::string actual_current = dir::current();
     dir::change("tests");
     assert_equal(expected_current, actual_current);
   }

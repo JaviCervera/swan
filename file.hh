@@ -42,8 +42,8 @@ namespace swan
     unsigned long long readuint64();
     float readfloat();
     double readdouble();
-    string_t readcstring();
-    string_t readcline();
+    std::string readcstring();
+    std::string readcline();
     size_t readbytes(void* buffer, size_t count) { return fread(buffer, 1, count, handle); }
 
     void writechar(char v) { fwrite(&v, 1, sizeof(char), handle); }
@@ -57,7 +57,7 @@ namespace swan
     void writefloat(float v) { fwrite(&v, 1, sizeof(float), handle); }
     void writedouble(double v) { fwrite(&v, 1, sizeof(double), handle); }
     void writecstring(const char* v) { fwrite(v, strlen(v)+1, sizeof(char), handle); }
-    void writecline(const char* v) { string_t str = string_t(v) + "\r\n"; fwrite(str.c_str(), str.length(), sizeof(char), handle); }
+    void writecline(const char* v) { std::string str = std::string(v) + "\r\n"; fwrite(str.c_str(), str.length(), sizeof(char), handle); }
     size_t writebytes(const void* buffer, size_t count) { return fwrite(buffer, 1, count, handle); }
   private:
     FILE* handle;
@@ -66,7 +66,7 @@ namespace swan
 
   inline file_t::file_t(const char* filename, mode m)
   {
-    string_t attr;
+    std::string attr;
     switch ( m )
     {
       case read:
@@ -164,9 +164,9 @@ namespace swan
     return v;
   }
 
-  inline string_t file_t::readcstring()
+  inline std::string file_t::readcstring()
   {
-    string_t str;
+    std::string str;
     char c = readchar();
     while ( c != 0 )
     {
@@ -176,9 +176,9 @@ namespace swan
     return str;
   }
 
-  inline string_t file_t::readcline()
+  inline std::string file_t::readcline()
   {
-    string_t str;
+    std::string str;
     char c = readchar();
     while ( c != '\r' && c != '\n' )
     {

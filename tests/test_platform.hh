@@ -10,7 +10,7 @@ class test_platform : public swan::testcase_t
 public:
   void test_platformknown()
   {
-    swan::string_t platform_name[] = {"unknown", "windows", "macos", "linux"};
+    std::string platform_name[] = {"unknown", "windows", "macos", "linux"};
     platform_id id = swan::platform::id();
     console::println("* Platform name: " + platform_name[id]);
     assert_notequal<size_t>(punknown, id);
@@ -18,9 +18,9 @@ public:
 
   void test_path()
   {
-    swan::string_t path = swan::platform::getenv("PATH");
+    std::string path = swan::platform::getenv("PATH");
     console::println("* PATH: " + path);
-    assert_notequal<string_t>("", path);
+    assert_notequal<std::string>("", path);
   }
 
   test_platform() : testcase_t("platform")
