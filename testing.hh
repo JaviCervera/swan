@@ -1,5 +1,3 @@
-// inspired by jasmine library: https://jasmine.github.io
-
 #ifndef SWAN_TESTING_INCLUDED
 #define SWAN_TESTING_INCLUDED
 
