@@ -71,7 +71,7 @@ namespace swan
 
     inline std::string stripext(const std::string& filename)
     {
-      return filename.substr(0, filename.find('.'));
+      return filename.substr(0, filename.rfind('.'));
     }
 
     inline std::string stripdir(const std::string& filename)
