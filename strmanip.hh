@@ -88,7 +88,7 @@ namespace swan
       size_t find_pos = filename.rfind('.');
       return (find_pos != std::string::npos)
         ? filename.substr(find_pos + 1, filename.length() - find_pos - 1)
-        : filename;
+        : "";
     }
 
     inline std::string extractdir(const std::string& filename)
