@@ -1,4 +1,4 @@
-# ![icon](icon/swan64.png) Swan
+# ![Swan](logo.png) Swan
 
 A set of C++ modules that provide some high-level features not available in the C++ Standard Library.
 
@@ -10,10 +10,11 @@ Modern C++ support (11 and upwards) is not required but recommended.
 
 Swan contains the following modules:
 
-* **console**: Console printing and input handling *(similar functionality to this module can be found in `<iostream>`, bit is provided in case you don't want to use the standard libraries)*.
+* **console**: Console printing and input handling *(similar functionality to this module can be found in `<iostream>`, but is provided in case you don't want to use the standard libraries)*.
 * **dir**: Directory manipulation. It can list dir contents, change the active directory, and create and delete directories *(the functionality of this module is now part of the standard on `std::filesystem`)*.
 * **file**: Reading and writing of binary files. It can also get file properties like size and type *(this module is mostly an alternative to `std::ifstream` and `std::ofstream`; the additional features are now on `std::filesystem`)*.
 * **math3d**: Provides `vec2_t`, `vec3_t`, `vec4_t`, `quat_t` and `mat4_t` classes, userful for 3D programming. Operates in radians.
+* **pair**: When compiled with `SWAN_NO_STL`, provides an implementation of the `std::pair` class. Otherwise, just includes `<utility>`.
 * **platform**: For accesing some platform features, like getting the platform type, launching a program, etc.
 * **sharedlib**: Access to dynamically linked libraries.
 * **string**: When compiled with `SWAN_NO_STL`, provides an implementation of a subset of `std::string` class. Otherwise, just includes `<string>`.
