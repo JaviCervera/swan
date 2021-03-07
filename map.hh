@@ -27,7 +27,7 @@ namespace std
     size_t count(const Key& key) const { return (find(key) != end()) ? 1 : 0; }
     iterator find(const Key& key) { return const_cast<iterator>(static_cast<const map<Key, T>*>(this)->find(key)); }
     const_iterator find(const Key& key) const;
-    void erase(const_iterator pos) { m.erase(pos); }
+    void erase(iterator pos) { m.erase(pos); }
     size_t erase(const Key& key);
     void clear() { m.clear(); }
     bool empty() const { return size() == 0; }
@@ -40,16 +40,16 @@ namespace std
   T& map<Key, T>::operator[](const Key& key) {
     iterator it = find(key);
     if (it == end()) {
-      m.push_back(std::pair(key, T()));
+      m.push_back(std::pair<Key, T>(key, T()));
       it = end() - 1;
     }
     return it->second;
   }
 
   template <typename Key, typename T>
-  const_iterator map<Key, T>::find(const Key& key) const {
-    for (const_iterator<Key, T> it = begin(); it != end(); ++it) {
-      if (*it.first == key) {
+  typename map<Key, T>::const_iterator map<Key, T>::find(const Key& key) const {
+    for (map<Key, T>::const_iterator it = begin(); it != end(); ++it) {
+      if (it->first == key) {
         return it;
       }
     }
@@ -58,7 +58,7 @@ namespace std
 
   template <typename Key, typename T>
   size_t map<Key, T>::erase(const Key& key) {
-    const_iterator it = find(key);
+    iterator it = find(key);
     if (it != end()) {
       erase(it);
       return 1;

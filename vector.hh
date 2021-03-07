@@ -76,11 +76,13 @@ namespace std
   template <typename T>
   vector<T>& vector<T>::operator=(const vector<T>& other)
   {
-    free(m_buffer);
-    m_buffer = (T*)calloc(other.m_capacity, sizeof(T));
-    m_size = other.m_size;
-    m_capacity = other.m_capacity;
-    for (size_t i = 0; i < other.m_size; ++i) m_buffer[i] = other.m_buffer[i];
+    if (this != &other) {
+      free(m_buffer);
+      m_buffer = (T*)calloc(other.m_capacity, sizeof(T));
+      m_size = other.m_size;
+      m_capacity = other.m_capacity;
+      for (size_t i = 0; i < other.m_size; ++i) m_buffer[i] = other.m_buffer[i];
+    }
     return *this;
   }
 

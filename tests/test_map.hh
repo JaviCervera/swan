@@ -82,14 +82,14 @@ struct test_map_t : public swan::testcase_t
 
   test_map_t() : testcase_t("map")
   {
-    add_test(test_func(&test_map_t::test_empty_constructor), "Checking that empty constructor has no elements.");
-    add_test(test_func(&test_map_t::test_insertion), "Checking insertion.");
-    add_test(test_func(&test_map_t::test_replacement), "Checking replacement.");
-    add_test(test_func(&test_map_t::test_value_deletion), "Checking deletion by value.");
-    add_test(test_func(&test_map_t::test_it_deletion), "Checking deletion by iterator.");
-    add_test(test_func(&test_map_t::test_clear), "Checking that clear works.");
-    add_test(test_func(&test_map_t::test_count), "Checking that count works.");
-    add_test(test_func(&test_map_t::test_find), "Checking that find works.");
+    add_test(test_func(&test_map_t::test_empty_constructor), "Checking that empty constructor has no elements");
+    add_test(test_func(&test_map_t::test_insertion), "Checking insertion");
+    add_test(test_func(&test_map_t::test_replacement), "Checking replacement");
+    add_test(test_func(&test_map_t::test_value_deletion), "Checking deletion by value");
+    add_test(test_func(&test_map_t::test_it_deletion), "Checking deletion by iterator");
+    add_test(test_func(&test_map_t::test_clear), "Checking that clear works");
+    add_test(test_func(&test_map_t::test_count), "Checking that count works");
+    add_test(test_func(&test_map_t::test_find), "Checking that find works");
   }
 };
 
